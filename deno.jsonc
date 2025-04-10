@@ -1,0 +1,17 @@
+{
+    "nodeModulesDir": "auto",
+    "tasks": {
+        "dev": "concurrently -k -r \"wait-on tcp:60000 && deno task dev:backend \" \"deno task dev:frontend\"",
+        "dev:backend": "NODE_ENV=development deno run --check --allow-all --watch-exclude=./frontend ./backend/main.ts",
+        "dev:frontend": "NODE_ENV=development vite --host --config ./frontend/vite.config.js",
+        "build:frontend": "vite build --config ./frontend/vite.config.js"
+    },
+    "fmt": {
+        "indentWidth": 4,
+        "semiColons": true,
+        "singleQuote": false,
+        "lineWidth": 200
+    },
+    "imports": {
+    }
+}
