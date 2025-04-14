@@ -1,0 +1,148 @@
+@import "vars.scss";
+@import "bootstrap/scss/bootstrap";
+@import "bootstrap-vue-next/dist/bootstrap-vue-next.css";
+
+:root {
+    scrollbar-color: $akaigrid-dark transparent;
+}
+
+#app {
+    font-family: "Segoe UI", sans-serif;
+}
+
+body {}
+
+.navbar-brand {
+    font-size: 25px;
+    color: #aaa;
+    transition: color 0.3s ease;
+
+    .akai {
+        color: $akai;
+        font-weight: 700;
+        font-size: 30px;
+    }
+
+    &:hover {
+        .akai {
+            color: lighten($akai, 10%);
+        }
+    }
+}
+
+.form-control {
+    background-color: $akaigrid-dark;
+
+    &:focus {
+        background-color: darken($akaigrid-dark, 10%);
+        border-color: $akai;
+        box-shadow: 0 0 0 0.2rem rgba($akai, 0.25);
+    }
+}
+
+.btn-secondary {
+    background-color: $akaigrid-dark;
+    border-color: rgba(0, 0, 0, 0.1);
+
+    &:hover {
+        background-color: $akai;
+        border-color: rgba(0, 0, 0, 0.2);
+    }
+
+    &:disabled {
+        background-color: $akaigrid-dark;
+        border-color: rgba(0, 0, 0, 0.1);
+        color: #aaa;
+    }
+
+    &.active {
+        background-color: $akai;
+        border-color: rgba(0, 0, 0, 0.2);
+    }
+}
+
+.item {
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+    cursor: pointer;
+    border-radius: 15px;
+    color: white;
+
+    // Done
+    &.done {
+        opacity: 0.2;
+    }
+
+    &.list {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        font-size: 18px;
+        padding: 15px;
+
+        .thumbnail {
+            display: inline-block;
+            width: 240px;
+        }
+
+        &.small {
+            .thumbnail {
+                width: 120px;
+            }
+        }
+
+        &.large {
+            .thumbnail {
+                width: 512px;
+            }
+        }
+    }
+
+    &.grid {
+        display: block;
+        padding: 10px 15px 10px 10px;
+        .thumbnail {
+            width: 100%;
+        }
+    }
+
+    .thumbnail {
+        border-radius: 15px;
+        position: relative;
+        overflow: hidden;
+        background-color: rgba(0, 0, 0, 0.1);
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        aspect-ratio: 16 / 9;
+
+        .folder-icon {
+            position: absolute;
+            z-index: 1;
+        }
+
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .progress {
+            position: absolute;
+            background-color: rgba(0, 0, 0, 0.4);
+            width: 100%;
+            height: 5px;
+            bottom: 0;
+            left: 0;
+
+            .progress-current {
+                background-color: $akai;
+                height: 100%;
+                // Override it with a custom width
+                width: 50%;
+            }
+        }
+    }
+
+    &:hover {
+        background-color: lighten($akaigrid-dark, 10%);
+    }
+}

@@ -1,10 +1,19 @@
 {
+    "version": "1.0.0",
+    "unstable": [
+        "fmt-component",
+        "kv"
+    ],
     "nodeModulesDir": "auto",
     "tasks": {
+        "start": "deno run --allow-all ./backend/main.ts",
+        "setup": "deno task build:frontend && deno run --allow-all ./extra/setup.ts",
         "dev": "concurrently -k -r \"wait-on tcp:60000 && deno task dev:backend \" \"deno task dev:frontend\"",
-        "dev:backend": "NODE_ENV=development deno run --check --allow-all --watch-exclude=./frontend ./backend/main.ts",
-        "dev:frontend": "NODE_ENV=development vite --host --config ./frontend/vite.config.js",
-        "build:frontend": "vite build --config ./frontend/vite.config.js"
+        "dev:backend": "NODE_ENV=development deno run --check --allow-all --watch --watch-exclude=./frontend ./backend/main.ts",
+        "dev:frontend": "NODE_ENV=development vite --host --config ./frontend/vite.config.ts",
+        "test": "deno test --allow-all --coverage",
+        "build": "deno run --check --allow-all ./extra/build.ts",
+        "build:frontend": "deno run --check --allow-all ./extra/build-frontend.ts"
     },
     "fmt": {
         "indentWidth": 4,
@@ -12,6 +21,19 @@
         "singleQuote": false,
         "lineWidth": 200
     },
+    // All production dependencies must be listed here, do not put them in package.json
+    // And dev dependencies must be listed in package.json, do not put them here
     "imports": {
+        "@louislam/deno-serve-router": "jsr:@louislam/deno-serve-router@~1.0.1",
+        "@std/fs": "jsr:@std/fs@^1.0.16",
+        "@std/http": "jsr:@std/http@^1.0.14",
+        "@std/log": "jsr:@std/log@^0.224.14",
+        "@std/path": "jsr:@std/path@^1.0.8",
+        "@std/semver": "jsr:@std/semver@^1.0.5",
+        "@std/yaml": "jsr:@std/yaml@~1.0.5",
+        "zod": "npm:zod@~3.24.3",
+        "winreg": "npm:winreg@~1.2.5",
+        "@types/winreg": "npm:@types/winreg@~1.2.36",
+        "natural-orderby": "npm:natural-orderby@~5.0.0"
     }
 }

@@ -1,0 +1,36 @@
+# AkaiGrid Config File
+# Remove the '#' at the beginning of the lines to set the values
+
+# Config since 1.0.0
+
+# Your Video Folders - Add them below
+# It supports Windows paths like "C:\Videos" and network paths like "\\MY_SMB\Videos"
+# Btw, this config file is in YAML format, so be careful with indentation!
+folders:
+    - C:\My AkaiGrid Videos
+    - C:\My AkaiGrid Movies
+
+# After opened a video or set a video to be done, modify its folder's last modified date to now.
+# So that the folder will be in the top of the list, it will be more convenient to find the series next time if the folder is sorted by "Date Modified / Desc".
+# (true or false) (default: false)
+#bringFolderToTop: false
+
+# Right click a item to set it as done and also bring its folder to the top of the list.
+# (true or false) (default: false)
+#bringFolderToTopDone: false
+
+# Launch browser automatically?
+# (true or false) (default: true)
+#launchBrowser: true
+
+# Hide dotfiles? (true or false) (default: true)
+#hideDotfiles: true
+
+# Listening Port
+# (number) (default: 60001)
+#port: 60001
+
+# Host
+# ⚠️ Expose it to the internet is dangerous! ⚠️ Don't touch this unless you know what you're doing!
+# (string) (default: 127.0.0.1)
+#host: 127.0.0.1
