@@ -19,6 +19,9 @@ jobs:
             - name: Setup repo
               uses: actions/checkout@v4
 
+            - name: Turn off core.autocrlf
+              run: git config --global core.autocrlf false
+
             - name: Setup Deno
               uses: denoland/setup-deno@v2
               with:
