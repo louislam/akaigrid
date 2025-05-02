@@ -7,11 +7,13 @@ const backendEntry = "./backend/main.ts";
 export function build() {
     checkBackend();
 
-    //removeLockFile();
+    removeLockFile();
     buildFrontend();
 
-    //removeLockFile();
+    removeLockFile();
     buildBackend();
+
+    removeLockFile();
 }
 
 if (import.meta.main) {
@@ -48,6 +50,8 @@ export function buildBackend() {
             "compile",
             "--include",
             "./frontend-dist",
+            "--include",
+            "./deno.jsonc",
             "--no-check",
             "--allow-all",
             "--output",
@@ -55,6 +59,8 @@ export function buildBackend() {
             "--node-modules-dir=none",
             "--target",
             "x86_64-pc-windows-msvc",
+            "--icon",
+            "./extra/logo.ico",
             backendEntry,
         ], {
             stdio: "inherit",
