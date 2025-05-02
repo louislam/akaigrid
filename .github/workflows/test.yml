@@ -16,11 +16,11 @@ jobs:
                 deno: [v2.x]
 
         steps:
-            - name: Setup repo
-              uses: actions/checkout@v4
-
             - name: Turn off core.autocrlf
               run: git config --global core.autocrlf false
+
+            - name: Setup repo
+              uses: actions/checkout@v4
 
             - name: Setup Deno
               uses: denoland/setup-deno@v2
