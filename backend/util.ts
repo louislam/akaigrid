@@ -10,7 +10,6 @@ import { VideoInfo } from "../common/util.ts";
 import { fileURLToPath } from "node:url";
 import * as jsonc from "@std/jsonc";
 
-
 /**
  * After compiled, some files are inside the executable, so the path is different
  */
@@ -102,8 +101,6 @@ export function sleep(ms: number) {
 export function getFrontendDir(): string {
     return path.join(getSourceDir(), "./frontend-dist");
 }
-
-
 
 export function start(path: string) {
     const escapedPath = escapeString(path);

@@ -1,6 +1,6 @@
 import process from "node:process";
 import { Server } from "./server.ts";
-import {appVersion, isDev, log, setupLog, start} from "./util.ts";
+import { appVersion, isDev, log, setupLog, start } from "./util.ts";
 import * as semver from "@std/semver";
 
 // Set NODE_ENV to production if not set
