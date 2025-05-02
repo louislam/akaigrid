@@ -1,0 +1,33 @@
+name: Test
+
+on:
+  push:
+    branches: ["master"]
+  pull_request:
+    branches: ["master"]
+
+
+jobs:
+  deno-test:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [windows-latest]
+        deno: [ stable ]
+
+    steps:
+      - name: Setup repo
+        uses: actions/checkout@v4
+
+      - name: Setup Deno
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: ${{ matrix.deno }}
+
+      - name: Check
+        run: deno task check
+
+      - name: Test
+        run: deno task test
+
