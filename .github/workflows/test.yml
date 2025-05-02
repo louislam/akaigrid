@@ -13,8 +13,7 @@ jobs:
 
     strategy:
       matrix:
-        os: [windows-latest]
-        deno: [ stable ]
+        os: [ windows-latest ]
 
     steps:
       - name: Setup repo
@@ -23,7 +22,7 @@ jobs:
       - name: Setup Deno
         uses: denoland/setup-deno@v2
         with:
-          deno-version: ${{ matrix.deno }}
+          deno-version: stable
 
       - name: Check
         run: deno task check
