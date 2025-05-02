@@ -24,6 +24,9 @@ jobs:
               with:
                   deno-version: ${{ matrix.deno }}
 
+            - name: Check Format
+              run: deno task fmt --check
+
             - name: Check
               run: deno task check
 
