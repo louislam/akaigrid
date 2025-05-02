@@ -7,8 +7,8 @@
 # It supports Windows paths like "C:\Videos" and network paths like "\\MY_SMB\Videos"
 # Btw, this config file is in YAML format, so be careful with indentation!
 folders:
-    - C:\My AkaiGrid Videos
-    - C:\My AkaiGrid Movies
+    - C:\MyExampleVideosFolder
+    - C:\MyExampleMoviesFolder
 
 # After opened a video or set a video to be done, modify its folder's last modified date to now.
 # So that the folder will be in the top of the list, it will be more convenient to find the series next time if the folder is sorted by "Date Modified / Desc".

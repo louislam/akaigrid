@@ -13,7 +13,8 @@
         "dev:frontend": "NODE_ENV=development vite --host --config ./frontend/vite.config.ts",
         "test": "deno test --allow-all --coverage",
         "build": "deno run --check --allow-all ./extra/build.ts",
-        "build:frontend": "deno run --check --allow-all ./extra/build-frontend.ts"
+        "build:frontend": "deno run --check --allow-all ./extra/build-frontend.ts",
+        "check": "deno check ./backend "
     },
     "fmt": {
         "indentWidth": 4,

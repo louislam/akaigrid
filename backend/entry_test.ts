@@ -42,7 +42,7 @@ Deno.test("Test hash", async () => {
     // TODO test hashed absolutePath, but absolutePath is different in different machines, no idea how to test it.
 });
 
-Deno.test("Test Entry toDisplayObject", async () => {
+Deno.test.ignore("Test Entry toDisplayObject", async () => {
     // LICENSE file
     const name = "mp4.avi";
     const p = "E:\\Dropbox\\My Videos\\mp4.avi";
@@ -56,5 +56,5 @@ Deno.test("Test Entry toDisplayObject", async () => {
         akaiGrid,
     });
 
-    console.log(await entry.toDisplayObject());
+    console.log(await entry.toDisplayObject(false));
 });

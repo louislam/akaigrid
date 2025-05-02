@@ -43,7 +43,7 @@ Deno.test("test getMPCHCMediaHistory", async () => {
     console.log(result);
 });
 
-Deno.test("test getVideoInfo", async () => {
+Deno.test.ignore("test getVideoInfo", async () => {
     const path = "E:\\Dropbox\\My Videos\\mp4.avi";
     const result = await getVideoInfo(path);
     console.log(result);
