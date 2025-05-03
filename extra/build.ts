@@ -14,7 +14,7 @@ if (import.meta.main) {
 
 export function build() {
     checkBackend();
-    buildFrontend();
+    buildFrontend(false);
     buildBackend();
 }
 
@@ -25,6 +25,7 @@ export function pack() {
 export function denoInstall() {
     childProcess.spawnSync("deno", [
         "install",
+        "--node-modules-dir=auto"
     ], {
         stdio: "inherit",
     });
@@ -33,18 +34,29 @@ export function denoInstall() {
 /**
  * Build the frontend
  */
-export function buildFrontend() {
+export function buildFrontend(isProduction: boolean) {
+    fs.copySync("./package-dev.json", "./package.json", {
+        overwrite: true,
+    });
+
+    denoInstall();
+
     childProcess.spawnSync("deno", [
         "run",
         "--allow-all",
-        "--node-modules-dir=none",
-        "npm:vite",
+        "--node-modules-dir=manual",
+        "./node_modules/vite/bin/vite.js",
         "build",
         "--config",
-        "./frontend/vite.config.ts",
+        "./frontend/vite.config.js",
     ], {
         stdio: "inherit",
     });
+
+    if (isProduction) {
+        Deno.removeSync("./package.json");
+        Deno.removeSync("node_modules", {recursive: true,});
+    }
 }
 
 /**

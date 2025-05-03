@@ -15,34 +15,34 @@
     // Disable this for safety for now
     "lock": false,
 
-    "nodeModulesDir": "auto",
-
     "tasks": {
         // Production Start
         "start": "deno run --allow-all ./backend/main.ts",
 
-        // One-time setup for production
+        // Setup for production
         "setup": "deno run --allow-all ./extra/setup.ts",
 
-        // Development (Start both backend and frontend at the same time)
-        "dev": "concurrently -k -r \"wait-on tcp:60000 && deno task dev:backend \" \"deno task dev:frontend\"",
+        // Setup for dev
+        "setup:dev": "deno run --allow-all ./extra/setup-dev.ts",
 
+        // (DEV ONLY) Development (Start both backend and frontend at the same time)
+        "dev": "concurrently -k -r \"wait-on tcp:60000 && deno task dev:backend \" \"deno task dev:frontend\"",
         "dev:backend": "NODE_ENV=development deno run --check --allow-all --watch --watch-exclude=./frontend ./backend/main.ts",
-        "dev:frontend": "NODE_ENV=development deno run --allow-all --node-modules-dir=manual npm:vite  --host --config ./frontend/vite.config.ts",
+        "dev:frontend": "NODE_ENV=development vite --host --config ./frontend/vite.config.ts",
 
         // Run Test
         "test": "deno test --allow-all --coverage",
 
-        // Compile the binary
+        // (DEV ONLY) Compile the binary
         "build": "deno run --check --allow-all ./extra/build.ts",
 
-        // Build the frontend
+        // (DEV ONLY) Build the frontend
         "build:frontend": "deno run --check --allow-all ./extra/build-frontend.ts",
 
         // Check backend code
         "check": "deno check ./backend",
 
-        // Pack the app into a 7z file, also includes nessecary tools like ffmpeg, ffprobe, etc.
+        // (DEV ONLY) Pack the app into a 7z file, also includes nessecary tools like ffmpeg, ffprobe, etc.
         "pack": "deno run --allow-all ./extra/pack.ts"
     },
 

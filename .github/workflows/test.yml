@@ -35,3 +35,9 @@ jobs:
 
             - name: Test
               run: deno task test
+
+            - name: Production Test (Setup)
+              run: deno task setup
+
+            - name: Dev Test (setup:dev)
+              run: deno task setup:dev

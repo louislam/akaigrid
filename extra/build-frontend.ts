@@ -1,3 +1,3 @@
 import { buildFrontend } from "./build.ts";
 
-buildFrontend();
+buildFrontend(false);

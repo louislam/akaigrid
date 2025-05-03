@@ -6,8 +6,9 @@ await fs.ensureDir("./tools");
 await download7zip();
 await downloadFFmpeg();
 
-// Build Frontend
-buildFrontend(true);
+// Copy package-dev.json to package.json
+Deno.copyFileSync("./package-dev.json", "./package.json");
+denoInstall();
 
 // check if config.yaml exists
 const configPath = "./config.yaml";
@@ -22,5 +23,5 @@ if (!fs.existsSync(configPath)) {
     console.log("config.yaml already exists.");
 }
 
-console.log("Please edit config.yaml to add your video folders!");
-console.log("`deno task start` to start the server");
+console.log("Dev environment setup complete.");
+console.log("`deno task dev` to start the dev server.");
