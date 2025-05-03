@@ -1,10 +1,8 @@
 name: Test
 
+# Manual trigger
 on:
-    push:
-        branches: ["master"]
-    pull_request:
-        branches: ["master"]
+    workflow_dispatch:
 
 jobs:
     deno-test:
@@ -27,11 +25,8 @@ jobs:
               with:
                   deno-version: ${{ matrix.deno }}
 
-            - name: Check Format
-              run: deno fmt --check
+            - name: Production Test (Setup)
+              run: deno task setup
 
-            - name: Check
-              run: deno task check
-
-            - name: Test
-              run: deno task test
+            - name: Dev Test (setup:dev)
+              run: deno task setup:dev

@@ -1,6 +1,6 @@
 import process from "node:process";
 import { Server } from "./server.ts";
-import { isDev, log, setupLog, start } from "./util.ts";
+import { appVersion, isDev, log, setupLog, start } from "./util.ts";
 import * as semver from "@std/semver";
 
 // Set NODE_ENV to production if not set
@@ -9,7 +9,7 @@ if (!process.env.NODE_ENV) {
 }
 
 const logLevel = setupLog();
-log.info("AkaiGrid");
+log.info("AkaiGrid " + appVersion);
 log.info("Shell (ComSpec): " + process.env.ComSpec);
 log.info("Env: " + process.env.NODE_ENV);
 log.info(`Log level: ${logLevel}`);

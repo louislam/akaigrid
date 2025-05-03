@@ -1,34 +1,62 @@
 import childProcess from "node:child_process";
-import fs from "node:fs";
+import * as fs from "@std/fs";
 import { log } from "../backend/util.ts";
-
+import { MultiProgressBar } from "jsr:@deno-library/progress@~1.5.1";
+import { Downloader } from "./downloader.ts";
+//import { Downloader } from "jsr:@rabbit-company/downloader@0.1.2";
+import * as path from "@std/path";
 const backendEntry = "./backend/main.ts";
-
-export function build() {
-    checkBackend();
-
-    //removeLockFile();
-    buildFrontend();
-
-    //removeLockFile();
-    buildBackend();
-}
+const prefix = "AkaiGrid-";
 
 if (import.meta.main) {
     build();
 }
 
+export function build() {
+    checkBackend();
+    buildFrontend(false);
+    buildBackend();
+}
+
+export function pack() {
+    build();
+}
+
+export function denoInstall() {
+    childProcess.spawnSync("deno", [
+        "install",
+        "--node-modules-dir=auto",
+    ], {
+        stdio: "inherit",
+    });
+}
+
 /**
  * Build the frontend
  */
-export function buildFrontend() {
-    childProcess.spawnSync("vite", [
+export function buildFrontend(isProduction: boolean) {
+    fs.copySync("./package-dev.json", "./package.json", {
+        overwrite: true,
+    });
+
+    denoInstall();
+
+    childProcess.spawnSync("deno", [
+        "run",
+        "--allow-all",
+        "--node-modules-dir=manual",
+        "./node_modules/vite/bin/vite.js",
         "build",
         "--config",
         "./frontend/vite.config.js",
     ], {
         stdio: "inherit",
     });
+
+    if (isProduction) {
+        Deno.removeSync("./package.json");
+        Deno.removeSync("node_modules", { recursive: true });
+    }
 }
 
 /**
@@ -38,7 +66,7 @@ export function buildBackend() {
     // Deno cannot exclude devDependencies.................. which heavily increases the size of the build.
     // I tried to be creative here.
     // Rename package.json in order to exclude devDependencies
-    fs.renameSync("package.json", "package.json.building");
+    Deno.renameSync("package.json", "package.json.building");
 
     // Because we have excluded devDependencies, @types/express is not existing anymore.
     // TypeScript will complain here, --no-check skips the check.
@@ -48,6 +76,8 @@ export function buildBackend() {
             "compile",
             "--include",
             "./frontend-dist",
+            "--include",
+            "./deno.jsonc",
             "--no-check",
             "--allow-all",
             "--output",
@@ -55,6 +85,8 @@ export function buildBackend() {
             "--node-modules-dir=none",
             "--target",
             "x86_64-pc-windows-msvc",
+            "--icon",
+            "./extra/logo.ico",
             backendEntry,
         ], {
             stdio: "inherit",
@@ -63,7 +95,7 @@ export function buildBackend() {
         log.error("Error while building the backend");
     }
 
-    fs.renameSync("package.json.building", "package.json");
+    Deno.renameSync("package.json.building", "package.json");
 }
 
 /**
@@ -78,12 +110,97 @@ export function checkBackend() {
     });
 }
 
-export function removeLockFile() {
-    try {
-        fs.rmSync("deno.lock");
-    } catch (_error) {
-        // Ignore error
+/**
+ * https://github.com/GyanD/codexffmpeg/releases
+ */
+export async function downloadFFmpeg() {
+    const version = "7.1.1";
+    const url = `https://github.com/GyanD/codexffmpeg/releases/download/${version}/ffmpeg-${version}-essentials_build.7z`;
+
+    const zipFile = "./tools/ffmpeg.7z";
+    const unzipDest = "./tools/ffmpeg";
+
+    if (await fs.exists(unzipDest)) {
+        log.info("FFmpeg already downloaded and unpacked");
+        return;
     }
+
+    if (!await fs.exists(zipFile)) {
+        await download("FFmpeg", url, zipFile);
+    } else {
+        log.info("FFmpeg already downloaded, but not unpacked");
+    }
+
+    // Unzip the file
+    const tmpDir = unzipDest + "_tmp";
+    await unzip(zipFile, tmpDir);
+    const innerDir = path.join(tmpDir, `ffmpeg-${version}-essentials_build`);
+
+    // Delete unnessesary files
+    await Deno.remove(path.join(innerDir, "bin", "ffplay.exe"));
+    await Deno.remove(path.join(innerDir, "README.txt"));
+    await Deno.remove(path.join(innerDir, "doc"), { recursive: true });
+    await Deno.remove(path.join(innerDir, "presets"), { recursive: true });
+
+    // Rename the tmpDir/ffmpeg-${version}-essentials_build to ffmpeg
+    await Deno.rename(innerDir, unzipDest);
+
+    // Delete the tmp folder
+    await Deno.remove(tmpDir);
+
+    // Delete the zip file
+    await Deno.remove(zipFile);
 }
 
-// https://www.gyan.dev/ffmpeg/builds/ffmpeg-git-essentials.7z
+export async function download7zip() {
+    const url = "https://github.com/ip7z/7zip/releases/download/24.09/7zr.exe";
+    const dest = "./tools/7zr.exe";
+
+    if (await fs.exists(dest)) {
+        log.info("7-Zip already downloaded");
+        return;
+    }
+    await download("7-Zip", url, dest);
+}
+
+export async function download(name: string, url: string, dest: string) {
+    const tmp = dest + ".tmp";
+    const bars = new MultiProgressBar({
+        title: `Downloading ${name}`,
+    });
+
+    const downloader = new Downloader({
+        url,
+        destinationPath: tmp,
+    });
+
+    const interval = setInterval(async () => {
+        await renderBars(bars, downloader.getProgress(), downloader.getDownloadSpeed());
+    }, 100);
+
+    await downloader.download();
+
+    await Deno.rename(tmp, dest);
+
+    clearInterval(interval);
+    await renderBars(bars, 100, downloader.getDownloadSpeed());
+}
+
+export async function unzip(filePath: string, dest: string) {
+    const bin = "./tools/7zr.exe";
+    childProcess.spawnSync(bin, [
+        "x",
+        filePath,
+        `-o${dest}`,
+    ], {
+        stdio: "inherit",
+    });
+    return dest;
+}
+
+export async function renderBars(bars: MultiProgressBar, progress: number = 100, speed: number) {
+    await bars.render([{
+        completed: Math.floor(progress),
+        text: `${(speed / 1024).toFixed(2)} KB/s`,
+    }]);
+}

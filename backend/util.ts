@@ -8,9 +8,35 @@ import { Buffer } from "node:buffer";
 import Registry from "winreg";
 import { VideoInfo } from "../common/util.ts";
 import { fileURLToPath } from "node:url";
+import * as jsonc from "@std/jsonc";
 
-const ffprobe = "./ffmpeg/bin/ffprobe.exe";
-const ffmpeg = "./ffmpeg/bin/ffmpeg.exe";
+// @types packages list here
+import type {} from "npm:@types/winreg";
+
+/**
+ * After compiled, some files are inside the executable, so the path is different
+ */
+export function getSourceDir(): string {
+    if (Deno.build.standalone) {
+        // `..` go up one leve is the root. In case this file moved to another folder in the future, be careful
+        return path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
+    } else {
+        return "./";
+    }
+}
+
+const ffprobe = "./tools/ffmpeg/bin/ffprobe.exe";
+const ffmpeg = "./tools/ffmpeg/bin/ffmpeg.exe";
+
+const denoJSONCPath = path.join(getSourceDir(), "./deno.jsonc");
+export const denoJSONC = jsonc.parse(await Deno.readTextFile(denoJSONCPath));
+let version = "unknown";
+if (denoJSONC && typeof denoJSONC === "object" && !Array.isArray(denoJSONC) && typeof denoJSONC.version === "string") {
+    version = denoJSONC.version;
+}
+
+// Parse deno.jsonc
+export const appVersion = version;
 
 // better for auto import for IDE
 export { log };
@@ -76,12 +102,7 @@ export function sleep(ms: number) {
 }
 
 export function getFrontendDir(): string {
-    let frontendDir = "./frontend-dist";
-    if (Deno.build.standalone) {
-        // .. to go the root. In case this file moved to another folder in the future, be careful
-        frontendDir = path.join(path.dirname(fileURLToPath(import.meta.url)), "..", frontendDir);
-    }
-    return frontendDir;
+    return path.join(getSourceDir(), "./frontend-dist");
 }
 
 export function start(path: string) {

@@ -1,37 +1,70 @@
 {
+    // App Version
     "version": "1.0.0",
+
     "unstable": [
+        // So format Vue components
         "fmt-component",
+
+        // Deno KV
         "kv"
     ],
-    "nodeModulesDir": "auto",
+
+    // I just don't understand why sometimes Deno keeps asking me to delete and regenerate this file...
+    // It could prevent the app from running, which is not ideal.
+    // Disable this for safety for now
+    "lock": false,
+
     "tasks": {
+        // Production Start
         "start": "deno run --allow-all ./backend/main.ts",
-        "setup": "deno task build:frontend && deno run --allow-all ./extra/setup.ts",
+
+        // Setup for production
+        "setup": "deno run --allow-all ./extra/setup.ts",
+
+        // Setup for dev
+        "setup:dev": "deno run --allow-all ./extra/setup-dev.ts",
+
+        // (DEV ONLY) Development (Start both backend and frontend at the same time)
         "dev": "concurrently -k -r \"wait-on tcp:60000 && deno task dev:backend \" \"deno task dev:frontend\"",
         "dev:backend": "NODE_ENV=development deno run --check --allow-all --watch --watch-exclude=./frontend ./backend/main.ts",
         "dev:frontend": "NODE_ENV=development vite --host --config ./frontend/vite.config.ts",
+
+        // Run Test
         "test": "deno test --allow-all --coverage",
+
+        // (DEV ONLY) Compile the binary
         "build": "deno run --check --allow-all ./extra/build.ts",
+
+        // (DEV ONLY) Build the frontend
         "build:frontend": "deno run --check --allow-all ./extra/build-frontend.ts",
-        "check": "deno check ./backend "
+
+        // Check backend code
+        "check": "deno check ./backend",
+
+        // (DEV ONLY) Pack the app into a 7z file, also includes nessecary tools like ffmpeg, ffprobe, etc.
+        "pack": "deno run --allow-all ./extra/pack.ts"
     },
+
+    // Run `deno fmt` to format your code
     "fmt": {
         "indentWidth": 4,
         "semiColons": true,
         "singleQuote": false,
         "lineWidth": 200
     },
+
     // All production dependencies must be listed here, do not put them in package.json
-    // And dev dependencies must be listed in package.json, do not put them here
+    // And dev dependencies must be listed in `package.json` and `package-dev.json`, do not put them here
     "imports": {
         "@louislam/deno-serve-router": "jsr:@louislam/deno-serve-router@~1.0.1",
         "@std/fs": "jsr:@std/fs@^1.0.16",
         "@std/http": "jsr:@std/http@^1.0.14",
+        "@std/jsonc": "jsr:@std/jsonc@^1.0.2",
         "@std/log": "jsr:@std/log@^0.224.14",
         "@std/path": "jsr:@std/path@^1.0.8",
         "@std/semver": "jsr:@std/semver@^1.0.5",
-        "@std/yaml": "jsr:@std/yaml@~1.0.5",
+        "@std/yaml": "jsr:@std/yaml@^1.0.5",
         "zod": "npm:zod@~3.24.3",
         "winreg": "npm:winreg@~1.2.5",
         "@types/winreg": "npm:@types/winreg@~1.2.36",
