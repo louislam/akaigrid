@@ -57,6 +57,9 @@ const listClass = computed(() => {
 });
 
 const sortedList = computed(() => {
+    if (pageType.value === "home") {
+        return list.value;
+    }
     console.log("sorting");
     let sortedList = sortObjectAsArray(list.value, dirConfig.value);
     return sortedList;
