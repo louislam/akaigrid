@@ -1,6 +1,6 @@
 import * as fs from "@std/fs";
 import { buildFrontend, denoInstall, download7zip, downloadFFmpeg } from "./build.ts";
-import { checkDenoVersion } from "../backend/util.ts";
+import { checkDenoVersion, start } from "../backend/util.ts";
 
 checkDenoVersion();
 
@@ -19,8 +19,8 @@ if (!fs.existsSync(configPath)) {
     // Copy config-template.yaml to config.yaml
     const templatePath = "./config-template.yaml";
     fs.copySync(templatePath, configPath);
-
     console.log("config.yaml has been created.");
+    start(configPath);
 } else {
     console.log("config.yaml already exists.");
 }

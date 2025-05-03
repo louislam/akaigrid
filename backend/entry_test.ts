@@ -11,7 +11,6 @@ globalThis.onunload = async () => {
 };
 
 Deno.test("Test hash", async () => {
-    const akaiGrid: AkaiGrid = await AkaiGrid.createInstance("./tmp");
     // LICENSE file
     const name = "LICENSE";
     const p = path.join(Deno.cwd(), name);

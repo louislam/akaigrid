@@ -57,9 +57,26 @@ const listClass = computed(() => {
 });
 
 const sortedList = computed(() => {
+    if (pageType.value === "home") {
+        return list.value;
+    }
     console.log("sorting");
     let sortedList = sortObjectAsArray(list.value, dirConfig.value);
     return sortedList;
+});
+
+// For home only
+const hasInvalidFolders = computed(() => {
+    if (pageType.value !== "home") {
+        return false;
+    }
+
+    for (let key in list.value) {
+        if (list.value[key].size == -1) {
+            return true;
+        }
+    }
+    return false;
 });
 
 // Watch path, update the page title
@@ -424,12 +441,18 @@ async function setDone(item) {
             <span>{{ path }}</span>
         </div>
 
+        <!-- Alert -->
+        <BAlert :model-value="true" class="mb-3" variant="warning" v-if="hasInvalidFolders">
+            Some Folder(s) is/are not found. Please edit `config.yaml` to add your video folders.<br />
+            Reload this page to see the changes.
+        </BAlert>
+
         <BAlert :model-value="true" class="mb-3" variant="danger" v-if="errorMessage">{{ errorMessage }}</BAlert>
 
         <div :class="listClass">
             <div v-for="(item, index) in sortedList" :key="item.name">
                 <ItemDir v-if="item.isDirectory" :item="item" :view="dirConfig.view" :itemSize="dirConfig.itemSize" @contextmenu.prevent="setDone(item)" />
-                <ItemFile v-if="item.isFile" :item="item" :lazy-load="index >= 10" :view="dirConfig.view" :itemSize="dirConfig.itemSize" @contextmenu.prevent="setDone(item)" />
+                <ItemFile v-if="item.isFile" :item="item" :lazy-load="index >= 5" :view="dirConfig.view" :itemSize="dirConfig.itemSize" @contextmenu.prevent="setDone(item)" />
             </div>
         </div>
     </div>

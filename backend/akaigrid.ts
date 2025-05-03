@@ -14,6 +14,7 @@ export class AkaiGrid {
      * Use ! to skip the check here
      */
     config!: AkaiGridConfig;
+    configFileWatcher!: Deno.FsWatcher;
 
     configFilename = "config.yaml";
     thumbnailDir: string;
@@ -35,24 +36,32 @@ export class AkaiGrid {
         const instance = new AkaiGrid(appDataDir, thumbnailDir);
 
         if (!await fs.exists(instance.configFullPath)) {
-            instance.config = AkaiGridConfigSchema.parse({});
-            await instance.saveConfig();
-        } else {
-            const configFile = await Deno.readTextFile(instance.configFullPath);
+            const configTemplatePath = "./config-template.yaml";
 
-            try {
-                instance.config = AkaiGridConfigSchema.parse(yaml.parse(configFile));
-            } catch (error) {
-                if (error instanceof Error) {
-                    log.error(error.message);
-                }
-                throw new Error("Error parsing your config file");
+            if (await fs.exists(configTemplatePath)) {
+                // Rename config-template.yaml to config.yaml
+                await Deno.copyFile("./config-template.yaml", instance.configFullPath);
+            } else {
+                // Probably the user deleted it or it is in Deno.build.standalone mode
+                log.error("config-template.yaml is not found. Please download it from the repository: https://github.com/louislam/akaigrid.");
             }
-
-            log.debug(instance.config);
         }
 
+        const configFile = await Deno.readTextFile(instance.configFullPath);
+
+        try {
+            instance.config = AkaiGridConfigSchema.parse(yaml.parse(configFile));
+        } catch (error) {
+            if (error instanceof Error) {
+                log.error(error.message);
+            }
+            throw new Error("Error parsing your config file");
+        }
+
+        log.debug(instance.config);
+
         await instance.checkDirs();
+        instance.watchConfigFile();
 
         return instance;
     }
@@ -267,8 +276,34 @@ export class AkaiGrid {
     }
 
     async close() {
-        log.info("Closing database...");
+        log.info("Closing KV...");
         await closeKv();
-        log.info("Closed database");
+
+        log.info("Closing config file watcher...");
+        this.configFileWatcher.close();
+    }
+
+    /**
+     * Watch config.yaml for changes, and reload the config if the yaml is valid
+     */
+    watchConfigFile() {
+        this.configFileWatcher = Deno.watchFs(this.configFullPath);
+        this.watchLoop(this.configFileWatcher).then((_) => {});
+    }
+
+    private async watchLoop(watcher: Deno.FsWatcher) {
+        for await (const event of watcher) {
+            if (event.kind === "modify" || event.kind === "create") {
+                const configFile = await Deno.readTextFile(this.configFullPath);
+                try {
+                    this.config = AkaiGridConfigSchema.parse(yaml.parse(configFile));
+                    log.info("Reload config file successfully!");
+                    await this.checkDirs();
+                } catch (error) {
+                    log.error("Reload config file failed, please check the format.");
+                }
+                log.debug(this.config);
+            }
+        }
     }
 }

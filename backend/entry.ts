@@ -188,12 +188,16 @@ export class Entry {
 
     async toDisplayObject(extraInfo: boolean, allMediaHistory: ObjectAsArray<number> = {}): Promise<EntryDisplayObject> {
         let stat;
+        let name = this.name;
         let dateModified: string;
         let size: number;
+        let done: boolean;
 
+        // All stat relative functions should be called here to avoid exceptions
         try {
             stat = await this.getStat();
             size = stat.size;
+            done = await this.getDone();
 
             if (stat.mtime === null) {
                 dateModified = new Date(0).toJSON();
@@ -202,18 +206,20 @@ export class Entry {
             }
         } catch (_) {
             // Probably not exist, but still return a valid object for Home
+            name = `[Not Found] ${name}`;
             size = -1;
+            done = false;
             dateModified = new Date(0).toJSON();
         }
 
         let obj = {
-            name: this.name,
+            name,
             isDirectory: this.isDirectory,
             isFile: this.isFile,
             absolutePath: this.absolutePath,
             size,
             dateModified,
-            done: await this.getDone(),
+            done,
             extraInfo: {},
         };
 
