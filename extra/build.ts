@@ -117,7 +117,7 @@ export async function downloadFFmpeg() {
     const version = "7.1.1";
     const url = `https://github.com/GyanD/codexffmpeg/releases/download/${version}/ffmpeg-${version}-essentials_build.7z`;
 
-    const dest = "./tools/ffmpeg.7z";
+    const zipFile = "./tools/ffmpeg.7z";
     const unzipDest = "./tools/ffmpeg";
 
     if (await fs.exists(unzipDest)) {
@@ -125,14 +125,15 @@ export async function downloadFFmpeg() {
         return;
     }
 
-    if (!await fs.exists(dest)) {
-        await download("FFmpeg", url, dest);
+    if (!await fs.exists(zipFile)) {
+        await download("FFmpeg", url, zipFile);
     } else {
         log.info("FFmpeg already downloaded, but not unpacked");
     }
 
     // Unzip the file
-    const tmpDir = await unzip(dest);
+    const tmpDir =unzipDest + "_tmp";
+    await unzip(zipFile, tmpDir);
     const innerDir = path.join(tmpDir, `ffmpeg-${version}-essentials_build`);
 
     // Delete unnessesary files
@@ -148,7 +149,7 @@ export async function downloadFFmpeg() {
     await Deno.remove(tmpDir);
 
     // Delete the zip file
-    await Deno.remove(dest);
+    await Deno.remove(zipFile);
 }
 
 export async function download7zip() {
@@ -163,7 +164,7 @@ export async function download7zip() {
 }
 
 export async function download(name: string, url: string, dest: string) {
-    const tmp = await Deno.makeTempFile({ prefix });
+    const tmp = dest + ".tmp";
     const bars = new MultiProgressBar({
         title: `Downloading ${name}`,
     });
@@ -185,17 +186,16 @@ export async function download(name: string, url: string, dest: string) {
     await renderBars(bars, 100, downloader.getDownloadSpeed());
 }
 
-export async function unzip(filePath: string) {
-    const tmpFolder = await Deno.makeTempDir({ prefix });
+export async function unzip(filePath: string, dest: string) {
     const bin = "./tools/7zr.exe";
     childProcess.spawnSync(bin, [
         "x",
         filePath,
-        `-o${tmpFolder}`,
+        `-o${dest}`,
     ], {
         stdio: "inherit",
     });
-    return tmpFolder;
+    return dest;
 }
 
 export async function renderBars(bars: MultiProgressBar, progress: number = 100, speed: number) {
