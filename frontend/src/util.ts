@@ -1,5 +1,3 @@
-import { arrayToObjectAsArray, DirConfig, EntryDisplayObject, ObjectAsArray, objectAsArrayToArray } from "../../common/util.ts";
-
 /**
  * Get the base URL
  * Mainly used for dev, because the backend and the frontend are in different ports.

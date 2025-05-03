@@ -26,9 +26,6 @@ AkaiGrid is a fancy frontend for browsing your video folders on Windows.
 - (Optional) [K-Lite Codec Pack](https://codecguide.com/download_kl.htm) - `Full` version is recommended, includes MPC-HC
 - (Optional) [MPC-HC extra settings - improve user experience]()
 
-
-
-
 ## Installation
 
 ### Method 1: Download the compiled binary (.exe)
@@ -40,6 +37,7 @@ AkaiGrid is a fancy frontend for browsing your video folders on Windows.
 ### Method 2: Run the source code using Deno
 
 Extra requirements:
+
 - Install Deno 2.3.1 or higher (https://docs.deno.com/runtime/)
 - Install Git (https://git-scm.com/downloads)
 
@@ -59,10 +57,11 @@ deno task start
 
 ## Motivation
 
-I used Jellyfin and Chromecast (with Google TV) to stream videos to my TV for a while. Jellyfin is great, but I faced issues with subtitles, fonts, naming, and audio sync. At times, I spent more time fixing problems
-than enjoying videos.
+I used Jellyfin and Chromecast (with Google TV) to stream videos to my TV for a while. Jellyfin is great, but I faced issues with subtitles, fonts, naming, and audio sync. At times, I spent more time
+fixing problems than enjoying videos.
 
-Recently, I switched to a Windows mini PC (Intel N100 CPU) as my "video player" in my living room. With MPC-HC and K-Lite Codec Pack, this combo plays videos smoothly with minimal issues, and the performance is much better than Chromecast.
+Recently, I switched to a Windows mini PC (Intel N100 CPU) as my "video player" in my living room. With MPC-HC and K-Lite Codec Pack, this combo plays videos smoothly with minimal issues, and the
+performance is much better than Chromecast.
 
 However, there aren’t many frontends for managing videos on Windows. So, I decided to create one.
 

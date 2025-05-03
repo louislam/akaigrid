@@ -15,8 +15,7 @@
     // Disable this for safety for now
     "lock": false,
 
-    // For vite, it seems to be the best option
-    "nodeModulesDir": "none",
+    "nodeModulesDir": "auto",
 
     "tasks": {
         // Production Start

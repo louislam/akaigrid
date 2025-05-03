@@ -1,12 +1,12 @@
 import childProcess from "node:child_process";
 import * as fs from "@std/fs";
-import {log} from "../backend/util.ts";
+import { log } from "../backend/util.ts";
 import { MultiProgressBar } from "jsr:@deno-library/progress@~1.5.1";
 import { Downloader } from "./downloader.ts";
 //import { Downloader } from "jsr:@rabbit-company/downloader@0.1.2";
 import * as path from "@std/path";
 const backendEntry = "./backend/main.ts";
-const prefix ="AkaiGrid-";
+const prefix = "AkaiGrid-";
 
 if (import.meta.main) {
     build();
@@ -22,16 +22,26 @@ export function pack() {
     build();
 }
 
-
+export function denoInstall() {
+    childProcess.spawnSync("deno", [
+        "install",
+    ], {
+        stdio: "inherit",
+    });
+}
 
 /**
  * Build the frontend
  */
 export function buildFrontend() {
-    childProcess.spawnSync("vite", [
+    childProcess.spawnSync("deno", [
+        "run",
+        "--allow-all",
+        "--node-modules-dir=none",
+        "npm:vite",
         "build",
         "--config",
-        "./frontend/vite.config.js",
+        "./frontend/vite.config.ts",
     ], {
         stdio: "inherit",
     });
