@@ -245,6 +245,8 @@ export async function download(name: string, url: string, dest: string) {
 
     clearInterval(interval);
     await renderBars(bars, 100, downloader.getDownloadSpeed());
+    console.log("");
+    console.log("");
 }
 
 export async function unzip(filePath: string, dest: string) {

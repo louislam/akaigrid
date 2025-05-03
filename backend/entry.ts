@@ -75,7 +75,12 @@ export class Entry {
             }
 
             // list the directory, get the first file and generate a thumbnail for it
-            let entryList = await this.akaiGrid.list(this.absolutePath);
+            let entryList = [];
+            const entryGenerator = this.akaiGrid.list(this.absolutePath);
+
+            for await (const entry of entryGenerator) {
+                entryList.push(entry);
+            }
 
             // Sort isFile first, then isDirectory
             entryList.sort((a, b) => {

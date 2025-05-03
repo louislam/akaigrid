@@ -57,7 +57,7 @@ const listClass = computed(() => {
 });
 
 const sortedList = computed(() => {
-    if (pageType.value === "home") {
+    if (pageType.value === "home" || dirConfig.value.sort === undefined) {
         return list.value;
     }
     console.log("sorting");

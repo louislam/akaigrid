@@ -131,9 +131,8 @@ export class AkaiGrid {
         await kv().set(["dirConfig", dir], dirConfig);
     }
 
-    async list(dir: string): Promise<Entry[]> {
+    async *list(dir: string): AsyncGenerator<Entry> {
         this.checkAllowedPath(dir);
-        const list: Entry[] = [];
 
         // Check if the directory exists
         if (!await fs.exists(dir)) {
@@ -159,18 +158,15 @@ export class AkaiGrid {
                 continue;
             }
 
-            list.push(
-                new Entry({
-                    name: entry.name,
-                    isDirectory: entry.isDirectory,
-                    isFile: entry.isFile,
-                    absolutePath: path.join(dir, entry.name),
-                    akaiGrid: this,
-                }),
-            );
+            const obj = new Entry({
+                name: entry.name,
+                isDirectory: entry.isDirectory,
+                isFile: entry.isFile,
+                absolutePath: path.join(dir, entry.name),
+                akaiGrid: this,
+            });
+            yield obj;
         }
-
-        return list;
     }
 
     async getEntry(path: string): Promise<Entry> {
