@@ -1,5 +1,8 @@
 import * as fs from "@std/fs";
 import { buildFrontend, denoInstall, download7zip, downloadFFmpeg } from "./build.ts";
+import { checkDenoVersion } from "../backend/util.ts";
+
+checkDenoVersion();
 
 // Download Tools
 await fs.ensureDir("./tools");

@@ -6,6 +6,7 @@
 /coverage
 /tmp
 /AkaiGrid.exe
+/release
 
 # Deno's Lockfile is weird, I don't understnad the behaviour at the moment
 # Sometimes it throws "Unsupported lockfile version '5'. Try upgrading Deno or recreating the lockfile" in other mahcines with same Deno version.

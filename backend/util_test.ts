@@ -1,5 +1,5 @@
 import { assertEquals, assertLess } from "jsr:@std/assert";
-import { escapeString, generateThumbnail, getMPCHCMediaHistory, getRFEHash, getVideoInfo } from "./util.ts";
+import { escapeString, generateThumbnail, getRFEHash, getVideoInfo } from "./util.ts";
 import * as fs from "@std/fs";
 
 Deno.test("test escapeString", () => {
@@ -35,12 +35,6 @@ Deno.test.ignore("test generateThumbnail", async () => {
 
     // Clean up the thumbnail file
     await Deno.remove(thumbnailPath);
-});
-
-Deno.test("test getMPCHCMediaHistory", async () => {
-    const path = "E:\\Dropbox\\My Videos\\mp4.avi";
-    const result = await getMPCHCMediaHistory(path);
-    console.log(result);
 });
 
 Deno.test.ignore("test getVideoInfo", async () => {
