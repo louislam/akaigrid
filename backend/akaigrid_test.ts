@@ -18,7 +18,6 @@ Deno.test("Test appdata dir", async () => {
 });
 
 Deno.test("Test isAllowedPath", async () => {
-
     // Create a temporary directory
     const tempDir = Deno.makeTempDirSync();
 

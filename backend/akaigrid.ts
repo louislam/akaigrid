@@ -235,7 +235,7 @@ export class AkaiGrid {
             return false;
         }
 
-        const resolvedDir = path.parse(path.resolve(p)).dir
+        const resolvedDir = path.parse(path.resolve(p)).dir;
         const dir = path.parse(p).dir;
 
         // Check if the path contains ".." that resolves to a different directory
