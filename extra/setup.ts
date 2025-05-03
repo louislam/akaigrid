@@ -19,13 +19,13 @@ if (!fs.existsSync(configPath)) {
     // Copy config-template.yaml to config.yaml
     const templatePath = "./config-template.yaml";
     fs.copySync(templatePath, configPath);
-
     console.log("config.yaml has been created.");
+    start(configPath);
 } else {
     console.log("config.yaml already exists.");
 }
 
-start(configPath);
+
 
 console.log("Please edit config.yaml to add your video folders!");
 console.log("`deno task start` to start the server");
