@@ -1,6 +1,6 @@
 import * as fs from "@std/fs";
 import { buildFrontend, denoInstall, download7zip, downloadFFmpeg } from "./build.ts";
-import { checkDenoVersion } from "../backend/util.ts";
+import {checkDenoVersion, start} from "../backend/util.ts";
 
 checkDenoVersion();
 
@@ -24,6 +24,8 @@ if (!fs.existsSync(configPath)) {
 } else {
     console.log("config.yaml already exists.");
 }
+
+start(configPath);
 
 console.log("Please edit config.yaml to add your video folders!");
 console.log("`deno task start` to start the server");
