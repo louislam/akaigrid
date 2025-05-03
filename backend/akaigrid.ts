@@ -229,8 +229,18 @@ export class AkaiGrid {
      */
     isAllowedPath(p: string): boolean {
         // Allow absolute paths only
+        // path.isAbsolute cannot check dot path!!!
         if (!path.isAbsolute(p)) {
             log.debug(`Path ${p} is not absolute.`);
+            return false;
+        }
+
+        const resolvedDir = path.parse(path.resolve(p)).dir;
+        const dir = path.parse(p).dir;
+
+        // Check if the path contains ".." that resolves to a different directory
+        if (resolvedDir !== dir) {
+            log.debug(`Path ${p} contains ".." or ".", which is not allowed.`);
             return false;
         }
 
