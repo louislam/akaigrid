@@ -3,10 +3,11 @@ import * as fs from "@std/fs";
 import { log } from "../backend/util.ts";
 import { MultiProgressBar } from "jsr:@deno-library/progress@~1.5.1";
 import { Downloader } from "./downloader.ts";
+import { appVersion } from "../backend/util.ts";
+
 //import { Downloader } from "jsr:@rabbit-company/downloader@0.1.2";
 import * as path from "@std/path";
 const backendEntry = "./backend/main.ts";
-const prefix = "AkaiGrid-";
 
 if (import.meta.main) {
     build();
@@ -18,8 +19,70 @@ export function build() {
     buildBackend();
 }
 
-export function pack() {
-    build();
+export async function pack() {
+
+    const fileList = [
+        "backend",
+        "common",
+        "./extra",
+        "./frontend-dist",
+        "./tools/ffmpeg",
+        "./config-template.yaml",
+        "./AkaiGrid.exe",
+        "LICENSE",
+    ]
+
+    const exe7zr = "./tools/7zr.exe";
+    const output = `./build/akaigrid-win-x64.7z`;
+    const level = 9;
+
+    // remove if exists
+    if (await fs.exists(output)) {
+        await Deno.remove(output);
+    }
+
+    const args = [
+        "a",
+        `-mx=${level}`,
+        "-mmt=on",
+        output,
+        ...fileList,
+    ];
+
+    let cmd = new Deno.Command(exe7zr, {
+        args: args,
+        stdout: "inherit",
+        stderr: "inherit",
+    });
+
+    const { code } = await cmd.output();
+
+    // Add config-template.yaml as config.yaml to the 7z file
+    cmd = new Deno.Command(exe7zr, {
+        args: [
+            "rn",
+            output,
+            "config-template.yaml",
+            "config.yaml",
+        ],
+        stdout: "inherit",
+        stderr: "inherit",
+    });
+    await cmd.output();
+
+    // Unfortunately, 7z cannot preserve the subdirectory structure, I need to correct it manually
+    cmd = new Deno.Command(exe7zr, {
+        args: [
+            "rn",
+            output,
+            "ffmpeg",
+            "tools/ffmpeg",
+        ],
+        stdout: "inherit",
+        stderr: "inherit",
+    });
+    await cmd.output();
+
 }
 
 export function denoInstall() {
@@ -34,7 +97,7 @@ export function denoInstall() {
 /**
  * Build the frontend
  */
-export function buildFrontend(isProduction: boolean) {
+export function buildFrontend(isBuiltByProductionUser: boolean) {
     fs.copySync("./package-dev.json", "./package.json", {
         overwrite: true,
     });
@@ -53,7 +116,7 @@ export function buildFrontend(isProduction: boolean) {
         stdio: "inherit",
     });
 
-    if (isProduction) {
+    if (isBuiltByProductionUser) {
         Deno.removeSync("./package.json");
         Deno.removeSync("node_modules", { recursive: true });
     }
