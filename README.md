@@ -32,7 +32,12 @@ AkaiGrid is a fancy frontend for browsing your video folders on Windows.
 
 1. Download []()
 2. Edit `config.yaml` to set your video folder paths
-3. Run `AkaiGrid.exe` to start the server
+    ```yaml
+    folders:
+        - C:\My Videos Folder
+        - \\SMB\My Videos Folder
+    ```
+4. Run `AkaiGrid.exe` to start the server
 
 ### Method 2: Run the source code using Deno
 
@@ -41,19 +46,28 @@ Extra requirements:
 - Install Deno 2.3.1 or higher (https://docs.deno.com/runtime/)
 - Install Git (https://git-scm.com/downloads)
 
-```bash
-# 1. Clone this repository
-git clone https://github.com/louislam/akaigrid
-cd akaigrid
 
-# 2. One-time setup
-deno task setup
+1. Clone this repository and install dependencies:
 
-# 3. Edit `config.yaml` to set your video folder paths
+    ```bash
+    git clone https://github.com/louislam/akaigrid
+    cd akaigrid
+    deno task setup
+    ```
 
-# 4. Start the server:
-deno task start
-```
+3. Edit `config.yaml` to set your video folder paths:
+
+    ```yaml
+    folders:
+        - C:\My Videos Folder
+        - \\SMB\My Videos Folder
+    ```
+
+4. Start the server:
+
+    ```bash
+    deno task start
+    ```
 
 ## Motivation
 
