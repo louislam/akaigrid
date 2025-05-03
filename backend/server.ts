@@ -1,7 +1,7 @@
 import * as fs from "@std/fs";
 import { AkaiGrid } from "./akaigrid.ts";
 import { Router } from "@louislam/deno-serve-router";
-import { allowDevAllOrigin, getFrontendDir, isDev, log, sleep } from "./util.ts";
+import { allowDevAllOrigin, devLogTime, devLogTimeEnd, getFrontendDir, isDev, log, sleep } from "./util.ts";
 import * as path from "@std/path";
 import { serveDir, serveFile } from "@std/http/file-server";
 import { DirConfigSchema, EntryDisplayObject, ObjectAsArray } from "../common/util.ts";
@@ -94,18 +94,27 @@ export class Server {
                 const extraInfo = url.searchParams.get("extraInfo") === "true";
                 const dirConfig = await this.akaiGrid.getDirConfig(dir);
                 const list: ObjectAsArray<EntryDisplayObject> = {};
-                const entryList = await this.akaiGrid.list(dir);
-
                 let allMediaHistory: ObjectAsArray<number> = {};
-
                 if (extraInfo) {
                     allMediaHistory = await getAllMPCHCMediaHistory();
                 }
 
-                for (const entry of entryList) {
-                    const obj = await entry.toDisplayObject(extraInfo, allMediaHistory);
-                    list[obj.name] = obj;
+                devLogTime("list " + dir);
+                const entryGenerator = this.akaiGrid.list(dir);
+                const toDisplayObjectPromises: Promise<void>[] = [];
+
+                // Generator will keep sending out entries
+                for await (const entry of entryGenerator) {
+                    const p = entry.toDisplayObject(extraInfo, allMediaHistory).then((obj) => {
+                        list[obj.name] = obj;
+                    });
+                    toDisplayObjectPromises.push(p);
                 }
+
+                // Wait for all promises to finish
+                await Promise.all(toDisplayObjectPromises);
+
+                devLogTimeEnd("list " + dir);
 
                 const res = Response.json({
                     status: true,
