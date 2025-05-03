@@ -14,6 +14,7 @@ export class AkaiGrid {
      * Use ! to skip the check here
      */
     config!: AkaiGridConfig;
+    configFileWatcher!: Deno.FsWatcher;
 
     configFilename = "config.yaml";
     thumbnailDir: string;
@@ -275,18 +276,19 @@ export class AkaiGrid {
     }
 
     async close() {
-        log.info("Closing database...");
+        log.info("Closing KV...");
         await closeKv();
-        log.info("Closed database");
+
+        log.info("Closing config file watcher...");
+        this.configFileWatcher.close();
     }
 
     /**
      * Watch config.yaml for changes, and reload the config if the yaml is valid
      */
     watchConfigFile() {
-        const watcher = Deno.watchFs(this.configFullPath);
-        this.watchLoop(watcher).then((_) => {});
-        return watcher;
+        this.configFileWatcher = Deno.watchFs(this.configFullPath);
+        this.watchLoop(this.configFileWatcher).then((_) => {});
     }
 
     private async watchLoop(watcher: Deno.FsWatcher) {
