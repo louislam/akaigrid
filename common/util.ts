@@ -152,3 +152,7 @@ export function sortArray(inputArray: EntryDisplayObject[], dirConfig: DirConfig
 
     return list;
 }
+
+export function sleep(ms: number) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+}

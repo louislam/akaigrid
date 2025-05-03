@@ -2,8 +2,8 @@ import { createRouter, createWebHistory } from "vue-router";
 
 import Layout from "./layouts/Layout.vue";
 import Dashboard from "./pages/Dashboard.vue";
-import Home from "./pages/Home.vue";
 import List from "./pages/List.vue";
+import { sleep } from "../../common/util.ts";
 
 const routes = [
     {
@@ -34,4 +34,22 @@ export const router = createRouter({
     linkActiveClass: "active",
     history: createWebHistory(),
     routes,
+    async scrollBehavior(to, from, savedPosition) {
+        if (savedPosition) {
+            console.log("Restoring scroll position:", savedPosition);
+
+            while (true) {
+                let element = document.querySelectorAll(".item");
+
+                if (element.length > 0) {
+                    savedPosition.behavior = "instant";
+                    return savedPosition;
+                }
+
+                await sleep(100);
+            }
+        } else {
+            return { top: 0 }; // Default behavior
+        }
+    },
 });
