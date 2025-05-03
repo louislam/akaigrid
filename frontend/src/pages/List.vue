@@ -432,7 +432,7 @@ async function setDone(item) {
         <div :class="listClass">
             <div v-for="(item, index) in sortedList" :key="item.name">
                 <ItemDir v-if="item.isDirectory" :item="item" :view="dirConfig.view" :itemSize="dirConfig.itemSize" @contextmenu.prevent="setDone(item)" />
-                <ItemFile v-if="item.isFile" :item="item" :lazy-load="index >= 10" :view="dirConfig.view" :itemSize="dirConfig.itemSize" @contextmenu.prevent="setDone(item)" />
+                <ItemFile v-if="item.isFile" :item="item" :lazy-load="index >= 5" :view="dirConfig.view" :itemSize="dirConfig.itemSize" @contextmenu.prevent="setDone(item)" />
             </div>
         </div>
     </div>
