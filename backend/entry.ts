@@ -2,10 +2,11 @@ import * as path from "@std/path";
 import crypto from "node:crypto";
 import { AkaiGrid } from "./akaigrid.ts";
 import * as fs from "@std/fs";
-import { devLogTime, devLogTimeEnd, generateThumbnail, getFrontendDir, getMPCHCMediaHistory, getVideoInfo, log } from "./util.ts";
+import { devLogTime, devLogTimeEnd, generateThumbnail, getFrontendDir, getVideoInfo, log } from "./util.ts";
 import { kv } from "./db/kv.ts";
-import { EntryDisplayObject, VideoInfo, VideoInfoSchema } from "../common/util.ts";
+import { EntryDisplayObject, ObjectAsArray, VideoInfo, VideoInfoSchema } from "../common/util.ts";
 import * as naturalOrderBy from "natural-orderby";
+import { getMPCHCMediaHistory } from "./history.ts";
 
 export class Entry {
     name: string;
@@ -109,7 +110,7 @@ export class Entry {
     /**
      * @returns Seconds (-1 if not found)
      */
-    async getLastPosition(): Promise<number> {
+    async getLastPosition(allMediaHistory: ObjectAsArray<number>): Promise<number> {
         if (this.isDirectory) {
             return -1;
         }
@@ -117,7 +118,7 @@ export class Entry {
         const id = await this.getID();
 
         devLogTime("getMPCHCMediaHistory " + id);
-        const seconds = await getMPCHCMediaHistory(this.absolutePath);
+        const seconds = getMPCHCMediaHistory(allMediaHistory, this.absolutePath);
         devLogTimeEnd("getMPCHCMediaHistory " + id);
 
         if (seconds === -1) {
@@ -185,14 +186,24 @@ export class Entry {
         devLogTimeEnd("setDone +" + id);
     }
 
-    async toDisplayObject(extraInfo: boolean): Promise<EntryDisplayObject> {
-        const stat = await this.getStat();
-
+    async toDisplayObject(extraInfo: boolean, allMediaHistory: ObjectAsArray<number> = {}): Promise<EntryDisplayObject> {
+        let stat;
         let dateModified: string;
-        if (stat.mtime === null) {
+        let size: number;
+
+        try {
+            stat = await this.getStat();
+            size = stat.size;
+
+            if (stat.mtime === null) {
+                dateModified = new Date(0).toJSON();
+            } else {
+                dateModified = stat.mtime?.toJSON();
+            }
+        } catch (_) {
+            // Probably not exist, but still return a valid object for Home
+            size = -1;
             dateModified = new Date(0).toJSON();
-        } else {
-            dateModified = stat.mtime?.toJSON();
         }
 
         let obj = {
@@ -200,7 +211,7 @@ export class Entry {
             isDirectory: this.isDirectory,
             isFile: this.isFile,
             absolutePath: this.absolutePath,
-            size: stat.size,
+            size,
             dateModified,
             done: await this.getDone(),
             extraInfo: {},
@@ -208,7 +219,7 @@ export class Entry {
 
         if (extraInfo) {
             const extraObj = {
-                lastPosition: await this.getLastPosition(),
+                lastPosition: await this.getLastPosition(allMediaHistory),
                 videoInfo: await this.getVideoInfo(),
             };
 

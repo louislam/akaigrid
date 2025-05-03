@@ -5,10 +5,10 @@ import { z } from "zod";
 import * as path from "@std/path";
 import { createHash } from "node:crypto";
 import { Buffer } from "node:buffer";
-import Registry from "winreg";
 import { VideoInfo } from "../common/util.ts";
 import { fileURLToPath } from "node:url";
 import * as jsonc from "@std/jsonc";
+import * as semver from "@std/semver";
 
 // @types packages list here
 import type {} from "npm:@types/winreg";
@@ -139,30 +139,6 @@ export function isSubPath(parent: string, child: string): boolean {
 
 export function isSamePath(path1: string, path2: string): boolean {
     return path.normalize(path1) === path.normalize(path2);
-}
-
-/**
- * Get the last position of a file in MPC-HC's MediaHistory
- * @returns Seconds (-1 if not found)
- */
-export function getMPCHCMediaHistory(path: string): Promise<number> {
-    const regKey = new Registry({
-        hive: Registry.HKCU,
-        key: "\\Software\\MPC-HC\\MPC-HC\\MediaHistory\\" + getRFEHash(path),
-    });
-
-    return new Promise((resolve, _reject) => {
-        regKey.get("FilePosition", (err, result) => {
-            if (err) {
-                if (!err.message.includes("unable to find the specified")) {
-                    log.error("Maybe an unexpected error: " + err.message);
-                }
-                resolve(-1);
-            } else {
-                resolve(parseInt(result.value) / 1000);
-            }
-        });
-    });
 }
 
 /**
@@ -367,4 +343,17 @@ export function devLogTimeEnd(label: string) {
         return;
     }
     console.timeEnd(label);
+}
+
+export function checkDenoVersion() {
+    const requiredDenoVersion = "2.3.1";
+    const denoVersion = semver.parse(Deno.version.deno);
+    const targetVersion = semver.parse(requiredDenoVersion);
+
+    // Check Deno version if >= 2.3.1
+    if (semver.compare(denoVersion, targetVersion) < 0) {
+        log.error("Your Deno version is " + Deno.version.deno);
+        log.error(`Deno version >= ${requiredDenoVersion} is required.`);
+        Deno.exit(1);
+    }
 }

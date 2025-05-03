@@ -66,8 +66,6 @@
         "@std/semver": "jsr:@std/semver@^1.0.5",
         "@std/yaml": "jsr:@std/yaml@^1.0.5",
         "zod": "npm:zod@~3.24.3",
-        "winreg": "npm:winreg@~1.2.5",
-        "@types/winreg": "npm:@types/winreg@~1.2.36",
         "natural-orderby": "npm:natural-orderby@~5.0.0"
     }
 }

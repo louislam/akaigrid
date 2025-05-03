@@ -5,6 +5,7 @@ import { allowDevAllOrigin, getFrontendDir, isDev, log, sleep } from "./util.ts"
 import * as path from "@std/path";
 import { serveDir, serveFile } from "@std/http/file-server";
 import { DirConfigSchema, EntryDisplayObject, ObjectAsArray } from "../common/util.ts";
+import { getAllMPCHCMediaHistory } from "./history.ts";
 
 export class Server {
     akaiGrid: AkaiGrid;
@@ -94,8 +95,14 @@ export class Server {
                 const list: ObjectAsArray<EntryDisplayObject> = {};
                 const entryList = await this.akaiGrid.list(dir);
 
+                let allMediaHistory: ObjectAsArray<number> = {};
+
+                if (extraInfo) {
+                    allMediaHistory = await getAllMPCHCMediaHistory();
+                }
+
                 for (const entry of entryList) {
-                    const obj = await entry.toDisplayObject(extraInfo);
+                    const obj = await entry.toDisplayObject(extraInfo, allMediaHistory);
                     list[obj.name] = obj;
                 }
 
