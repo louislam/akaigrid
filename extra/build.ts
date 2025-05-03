@@ -20,7 +20,6 @@ export function build() {
 }
 
 export async function pack() {
-
     const fileList = [
         "backend",
         "common",
@@ -30,7 +29,7 @@ export async function pack() {
         "./config-template.yaml",
         "./AkaiGrid.exe",
         "LICENSE",
-    ]
+    ];
 
     const exe7zr = "./tools/7zr.exe";
     const output = `./build/akaigrid-win-x64.7z`;
@@ -82,7 +81,6 @@ export async function pack() {
         stderr: "inherit",
     });
     await cmd.output();
-
 }
 
 export function denoInstall() {

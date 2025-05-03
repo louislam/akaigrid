@@ -23,8 +23,6 @@ if (!process.env.ComSpec?.endsWith("cmd.exe")) {
 
 let server: Server;
 
-
-
 // Catch Signal
 const signalHandler = async () => {
     log.info("Shutdown requested");
@@ -60,6 +58,3 @@ try {
     await new Promise((resolve) => setTimeout(resolve, 10000));
     Deno.exit(1);
 }
-
-
-

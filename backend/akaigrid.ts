@@ -59,7 +59,6 @@ export class AkaiGrid {
 
         log.debug(instance.config);
 
-
         await instance.checkDirs();
         instance.watchConfigFile();
 
@@ -286,7 +285,7 @@ export class AkaiGrid {
      */
     watchConfigFile() {
         const watcher = Deno.watchFs(this.configFullPath);
-        this.watchLoop(watcher).then(_ => {});
+        this.watchLoop(watcher).then((_) => {});
         return watcher;
     }
 
@@ -305,5 +304,4 @@ export class AkaiGrid {
             }
         }
     }
-
 }
