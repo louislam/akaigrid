@@ -29,7 +29,8 @@ export class Server {
                 if (isDev()) {
                     console.error("You need to build the frontend first. Run `deno task build`.");
                 } else {
-                    console.error(`${frontendDir} does not exist. Did you install this application correctly?`);
+                    console.error(`${frontendDir} does not exist.`);
+                    console.error(`Please run \`deno task setup\` to build ${frontendDir}`);
                 }
                 Deno.exit(1);
             }

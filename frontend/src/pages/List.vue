@@ -65,6 +65,20 @@ const sortedList = computed(() => {
     return sortedList;
 });
 
+// For home only
+const hasInvalidFolders = computed(() => {
+    if (pageType.value !== "home") {
+        return false;
+    }
+    
+    for (let key in list.value) {
+        if (list.value[key].size == -1) {
+            return true;
+        }
+    }
+    return false;
+});
+
 // Watch path, update the page title
 watch(path, (newPath) => {
     if (pageType.value === "home") {
@@ -427,6 +441,12 @@ async function setDone(item) {
             <span>{{ path }}</span>
         </div>
 
+        <!-- Alert -->
+        <BAlert :model-value="true" class="mb-3" variant="warning" v-if="hasInvalidFolders">
+            Some Folder(s) is/are not found. Please edit `config.yaml` to add your video folders.<br />
+            Reload this page to see the changes.
+        </BAlert>
+        
         <BAlert :model-value="true" class="mb-3" variant="danger" v-if="errorMessage">{{ errorMessage }}</BAlert>
 
         <div :class="listClass">
