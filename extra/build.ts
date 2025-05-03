@@ -132,7 +132,7 @@ export async function downloadFFmpeg() {
     }
 
     // Unzip the file
-    const tmpDir =unzipDest + "_tmp";
+    const tmpDir = unzipDest + "_tmp";
     await unzip(zipFile, tmpDir);
     const innerDir = path.join(tmpDir, `ffmpeg-${version}-essentials_build`);
 
