@@ -1,4 +1,5 @@
 import * as fs from "@std/fs";
+import {download7zip, downloadFFmpeg} from "./build.ts";
 
 // check if config.yaml exists
 const configPath = "./config.yaml";
@@ -11,4 +12,12 @@ if (!fs.existsSync(configPath)) {
     console.log("config.yaml has been created. Please edit it to your needs.");
 }
 
-// download ffmpeg
+// deno install
+
+// Build Frontend
+
+// Delete node_modules, it is just for building the frontend
+
+await fs.ensureDir("./tools");
+await download7zip();
+await downloadFFmpeg();

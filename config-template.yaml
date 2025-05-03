@@ -1,7 +1,7 @@
 # AkaiGrid Config File
 # Remove the '#' at the beginning of the lines to set the values
 
-# Config since 1.0.0
+##### Since 1.0.0
 
 # Your Video Folders - Add them below
 # It supports Windows paths like "C:\Videos" and network paths like "\\MY_SMB\Videos"

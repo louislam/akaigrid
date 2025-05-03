@@ -10,6 +10,9 @@ import { VideoInfo } from "../common/util.ts";
 import { fileURLToPath } from "node:url";
 import * as jsonc from "@std/jsonc";
 
+// @types packages list here
+import type {} from "npm:@types/winreg";
+
 /**
  * After compiled, some files are inside the executable, so the path is different
  */
@@ -22,8 +25,8 @@ export function getSourceDir(): string {
     }
 }
 
-const ffprobe = "./ffmpeg/bin/ffprobe.exe";
-const ffmpeg = "./ffmpeg/bin/ffmpeg.exe";
+const ffprobe = "./tools/ffmpeg/bin/ffprobe.exe";
+const ffmpeg = "./tools/ffmpeg/bin/ffmpeg.exe";
 
 const denoJSONCPath = path.join(getSourceDir(), "./deno.jsonc");
 export const denoJSONC = jsonc.parse(await Deno.readTextFile(denoJSONCPath));

@@ -5,16 +5,15 @@
 /build
 /coverage
 /tmp
+/AkaiGrid.exe
 
 # Deno's Lockfile is weird, I don't understnad the behaviour at the moment
 # Sometimes it throws "Unsupported lockfile version '5'. Try upgrading Deno or recreating the lockfile" in other mahcines with same Deno version.
 /deno.lock
-/ffmpeg
 
-# Runtime files
 /data
-/ffmpeg
+/tools
 /frontend-dist
 /config.yaml
-/AkaiGrid.exe
+
 
