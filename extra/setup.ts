@@ -1,5 +1,5 @@
 import * as fs from "@std/fs";
-import {buildFrontend, denoInstall, download7zip, downloadFFmpeg} from "./build.ts";
+import { buildFrontend, denoInstall, download7zip, downloadFFmpeg } from "./build.ts";
 
 // Download Tools
 await fs.ensureDir("./tools");

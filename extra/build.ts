@@ -25,7 +25,7 @@ export function pack() {
 export function denoInstall() {
     childProcess.spawnSync("deno", [
         "install",
-        "--node-modules-dir=auto"
+        "--node-modules-dir=auto",
     ], {
         stdio: "inherit",
     });
@@ -55,7 +55,7 @@ export function buildFrontend(isProduction: boolean) {
 
     if (isProduction) {
         Deno.removeSync("./package.json");
-        Deno.removeSync("node_modules", {recursive: true,});
+        Deno.removeSync("node_modules", { recursive: true });
     }
 }
 
