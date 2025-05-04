@@ -27,6 +27,12 @@ Please note that AkaiGrid is a local app, you need to download and run it on you
 
 [https://akaigrid.kuma.pet](https://akaigrid.kuma.pet/list/**app**videos)
 
+## Comparison
+
+The same folder in Windows Explorer. AkaiGrid is better, right?
+
+<img src="https://github.com/user-attachments/assets/1f19ddf5-3410-4a87-9d8a-316dc9eb4dc1" width=500 />
+
 ## Requirements
 
 - Windows 10 or 11 (x64)
