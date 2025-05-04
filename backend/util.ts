@@ -200,7 +200,8 @@ export async function getVideoInfo(videoPath: string): Promise<VideoInfo> {
     });
     const output = await command.output();
     if (output.code !== 0) {
-        throw new Error(`Error executing ffprobe: ${output.stderr}, ${output.code}`);
+        const errorMsg = new TextDecoder().decode(output.stderr);
+        throw new Error(`Error executing ffprobe: ${errorMsg}, ${output.code}`);
     }
     const decoder = new TextDecoder();
     const json = decoder.decode(output.stdout);
@@ -234,7 +235,8 @@ export async function generateThumbnail(videoPath: string, thumbnailPath: string
     let output = await command.output();
 
     if (output.code !== 0) {
-        throw new Error(`Error executing ffprobe: ${output.stderr}, ${output.code}`);
+        const errorMsg = new TextDecoder().decode(output.stderr);
+        throw new Error(`Error executing ffprobe: ${errorMsg}, ${output.code}`);
     }
 
     // Get the video duration
