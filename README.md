@@ -2,6 +2,8 @@
 
 AkaiGrid is a fancy frontend for browsing your video folders on Windows.
 
+![](https://github.com/user-attachments/assets/1d5c2191-b0a8-4c6c-9b00-9f34b666203a)
+
 ## Features
 
 - ✨ Fancy UI - displays your video libraries in a fancy layout
@@ -32,7 +34,7 @@ Please note that AkaiGrid is a local app, you need to download and run it on you
 - Your favorite video player (MPC-HC is recommended)
 - Resolution: 1920x1080 (100 dpi) or higher
 - (Optional) [K-Lite Codec Pack](https://codecguide.com/download_kl.htm) - `Full` version is recommended, includes MPC-HC
-- (Optional) [MPC-HC extra settings - improve user experience]()
+- (Optional) [MPC-HC extra settings - improve user experience](https://github.com/louislam/akaigrid/wiki/MPC%E2%80%90HC-Settings)
 
 ## How to Use
 
@@ -77,6 +79,16 @@ Extra requirements:
    ```bash
    deno task start
    ```
+
+## Gallery
+
+It is how it feels on my 48" TV:
+
+<img src="https://github.com/user-attachments/assets/04c5bc33-7297-48ea-8a65-393d86841651" width="600" />
+
+Playback position and mark as watched features:
+
+<img src="https://github.com/user-attachments/assets/5866abc8-6113-4875-8753-61e082e8e452" width="600" />
 
 ## Motivation
 
