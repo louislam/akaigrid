@@ -32,7 +32,6 @@ export async function pack() {
     const output = path.join(cwd, outputCWD);
 
     const fileList = [
-        ["./frontend-dist", "./frontend-dist"],
         ["./tools/ffmpeg", "./tools/ffmpeg"],
         ["./config-template.yaml", "./config.yaml"],
         ["./AkaiGrid.exe", "./AkaiGrid.exe"],
