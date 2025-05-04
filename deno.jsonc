@@ -42,7 +42,7 @@
         // Check backend code
         "check": "deno check ./backend",
 
-        // (DEV ONLY) Pack the app into a 7z file, also includes nessecary tools like ffmpeg, ffprobe, etc.
+        // (DEV ONLY) Pack the app into a 7z file, also includes necessary tools like ffmpeg, ffprobe, etc.
         "pack": "deno run --allow-all ./extra/pack.ts"
     },
 
