@@ -287,8 +287,13 @@ export class AkaiGrid {
         log.info("Closing KV...");
         await closeKv();
 
+        log.info("Closing config file watcher...");
         this.configFileWatcher.close();
+
+        log.info("Clearing all stat cache...");
         await clearAllStatCache();
+
+        log.info("AkaiGrid closed.");
     }
 
     /**

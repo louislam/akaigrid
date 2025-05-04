@@ -283,7 +283,7 @@ export class Server {
                 return response;
             });
             this.server.finished.then(() => {
-                log.info("Server closed");
+                log.info("Deno server closed");
             });
         } catch (error) {
             log.error("Error starting server: " + error);
@@ -294,8 +294,10 @@ export class Server {
     }
 
     async close() {
-        log.info("Closing server...");
+        log.info("Closing deno server...");
         this.abortController.abort();
+
+        log.info("Closing AkaiGrid...");
         await this.akaiGrid.close();
     }
 }

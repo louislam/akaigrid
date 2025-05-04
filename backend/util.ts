@@ -140,7 +140,9 @@ export function isSubPath(parent: string, child: string): boolean {
 }
 
 export function isSamePath(path1: string, path2: string): boolean {
-    return path.normalize(path1) === path.normalize(path2);
+    const p1 = path.parse(path1);
+    const p2 = path.parse(path2);
+    return p1.dir === p2.dir && p1.base === p2.base;
 }
 
 /**

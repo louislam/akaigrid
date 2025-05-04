@@ -30,15 +30,16 @@ AkaiGrid is a fancy frontend for browsing your video folders on Windows.
 
 ### Method 1: Download the compiled binary (.exe)
 
-1. Download []()
-2. Edit `config.yaml` to set your video folder paths
+1. Download [akaigrid-win-x64.7z](https://github.com/louislam/uptime-kuma/releases/latest)
+2. Decompress with 7-Zip or WinRAR
+3. Edit `config.yaml` to set your video folder paths
 
    ```yaml
    folders:
        - C:\My Videos Folder
        - \\SMB\My Videos Folder
    ```
-3. Run `AkaiGrid.exe` to start the server
+4. Run `AkaiGrid.exe` to start the server
 
 ### Method 2: Run the source code using Deno
 
@@ -89,6 +90,10 @@ Akai (赤い / あかい / a-ka-i) is a Japanese word meaning "red". It is an ad
 
 Why red? I don't know, but some popular online video platforms are also red, haha.
 
+### How to refresh cached thumbnails in browser?
+
+Ctrl + F5 in your browser.
+
 ### Can I use it on my phone?
 
 No.
@@ -102,3 +107,7 @@ No. AkaiGrid is built for Windows. For other systems, someone else would need to
 No. AkaiGrid focuses on displaying your video libraries on Windows and relies on video players like MPC-HC for playback.
 
 If you want to stream videos to your phone or play music, you may still need Jellyfin.
+
+### Notes
+
+To avoid copyright issues, video thumbnails that are shown here are AI-generated or masked.
