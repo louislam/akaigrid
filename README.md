@@ -4,6 +4,7 @@ AkaiGrid is a fancy frontend for browsing your video folders on Windows.
 
 ![](https://github.com/user-attachments/assets/1d5c2191-b0a8-4c6c-9b00-9f34b666203a)
 
+
 ## Features
 
 - ✨ Fancy UI - displays your video libraries in a fancy layout
@@ -26,6 +27,12 @@ You can feel it by visiting the demo site, but there is no actual video content.
 Please note that AkaiGrid is a local app, you need to download and run it on your own computer to have the full experience.
 
 [https://akaigrid.kuma.pet](https://akaigrid.kuma.pet/list/**app**videos)
+
+## Comparison
+
+The same folder in Windows Explorer. AkaiGrid is better, right?
+
+<img src="https://github.com/user-attachments/assets/1f19ddf5-3410-4a87-9d8a-316dc9eb4dc1" width=500 />
 
 ## Requirements
 
