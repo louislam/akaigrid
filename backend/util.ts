@@ -116,6 +116,10 @@ export function isDev() {
     return process.env.NODE_ENV === "development";
 }
 
+export function isDemo() {
+    return process.env.NODE_ENV === "demo";
+}
+
 export function allowDevAllOrigin(res: Response) {
     if (isDev()) {
         res.headers.set("Access-Control-Allow-Origin", "*");

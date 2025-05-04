@@ -107,7 +107,3 @@ No. AkaiGrid is built for Windows. For other systems, someone else would need to
 No. AkaiGrid focuses on displaying your video libraries on Windows and relies on video players like MPC-HC for playback.
 
 If you want to stream videos to your phone or play music, you may still need Jellyfin.
-
-### Notes
-
-To avoid copyright issues, video thumbnails that are shown here are AI-generated or masked.

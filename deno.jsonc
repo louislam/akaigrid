@@ -40,13 +40,17 @@
         "build:frontend": "deno run --check --allow-all ./extra/build-frontend.ts",
 
         // Check backend code
+        // For production users, please use `deno task setup` instead
         "check": "deno check ./backend",
 
-        // (DEV ONLY) Pack the app into a 7z file, also includes necessary tools like ffmpeg, ffprobe, etc.
+        // (DEV ONLY) Build and pack the app into a 7z file, also includes necessary tools like ffmpeg, ffprobe, etc.
         "pack": "deno run --allow-all ./extra/pack.ts",
 
         // Lint
-        "lint": "deno lint"
+        "lint": "deno lint",
+
+        // Demo Container (Just for demo purpose)
+        "demo": "deno task build:frontend && docker compose -f ./extra/demo/compose.yaml --project-directory ./ up --build"
     },
 
     // Run `deno fmt` to format your code

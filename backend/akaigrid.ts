@@ -236,6 +236,8 @@ export class AkaiGrid {
         const resolvedDir = path.parse(path.resolve(p)).dir;
         const dir = path.parse(p).dir;
 
+        log.debug(`Resolved dir: ${resolvedDir}, dir: ${dir}`);
+
         // Check if the path contains ".." that resolves to a different directory
         if (resolvedDir !== dir) {
             log.debug(`Path ${p} contains ".." or ".", which is not allowed.`);

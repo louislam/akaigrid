@@ -1,0 +1,12 @@
+# Run it via `deno task demo-container` in the project root
+# The working directory is set to the root of the project
+
+services:
+    app:
+        build:
+            context: .
+            dockerfile: ./extra/demo/Dockerfile
+        ports:
+            - "60001:60001"
+        environment:
+            - NODE_ENV=demo

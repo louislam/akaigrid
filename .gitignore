@@ -15,6 +15,11 @@
 /data
 /tools
 /frontend-dist
-/config.yaml
+
 /package.json
 
+/config.yaml
+/config*.yaml
+!config-template.yaml
+
+/videos

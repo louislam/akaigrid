@@ -59,10 +59,12 @@ export type EntryDisplayObject = z.infer<typeof EntryDisplayObjectSchema>;
 
 /**
  * Convert \ to |
- * @param windowsPath
+ * @param p
  */
-export function encodeRequestPath(windowsPath: string) {
-    return windowsPath.replace(/\\/g, "|");
+export function encodeRequestPath(p: string) {
+    return p
+        .replace(/\\/g, "|") // For Windows
+        .replace(/\//g, "**"); // For Linux Demo
 }
 
 /**
@@ -70,7 +72,9 @@ export function encodeRequestPath(windowsPath: string) {
  * @param requestPath
  */
 export function decodeRequestPath(requestPath: string) {
-    return requestPath.replace(/\|/g, "\\");
+    return requestPath
+        .replace(/\|/g, "\\") // For Windows
+        .replace(/\*\*/g, "/"); // For Linux Demo
 }
 
 export function isEmptyObject(obj: object) {

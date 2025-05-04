@@ -1,7 +1,7 @@
 import * as fs from "@std/fs";
 import { AkaiGrid } from "./akaigrid.ts";
 import { Router } from "@louislam/deno-serve-router";
-import { allowDevAllOrigin, devLogTime, devLogTimeEnd, getFrontendDir, isDev, log, placeholderImagePath, sleep } from "./util.ts";
+import { allowDevAllOrigin, devLogTime, devLogTimeEnd, getFrontendDir, isDemo, isDev, log, placeholderImagePath, sleep } from "./util.ts";
 import * as path from "@std/path";
 import { serveDir, serveFile } from "@std/http/file-server";
 import { DirConfigSchema, EntryDisplayObject, ObjectAsArray } from "../common/util.ts";
@@ -92,7 +92,13 @@ export class Server {
                 const isTopLevel = this.akaiGrid.isTopLevel(dir);
 
                 const url = new URL(req.url);
-                const extraInfo = url.searchParams.get("extraInfo") === "true";
+                let extraInfo = url.searchParams.get("extraInfo") === "true";
+
+                // Extra info is not available in demo mode
+                if (isDemo()) {
+                    extraInfo = false;
+                }
+
                 const dirConfig = await this.akaiGrid.getDirConfig(dir);
                 const list: ObjectAsArray<EntryDisplayObject> = {};
                 let allMediaHistory: ObjectAsArray<number> = {};
