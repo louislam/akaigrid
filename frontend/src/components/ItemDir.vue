@@ -22,6 +22,15 @@ const itemClass = computed(() => {
         obj["list"] = true;
     }
 
+    // Size
+    if (props.itemSize === "small") {
+        obj["small"] = true;
+    } else if (props.itemSize === "medium") {
+        obj["medium"] = true;
+    } else if (props.itemSize === "large") {
+        obj["large"] = true;
+    }
+
     // Done?
     if (props.item.done) {
         obj["done"] = true;

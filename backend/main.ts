@@ -1,6 +1,6 @@
 import process from "node:process";
 import { Server } from "./server.ts";
-import { appVersion, checkDenoVersion, isDev, log, setupLog, start } from "./util.ts";
+import { appVersion, checkDenoVersion, isDemo, isDev, log, setupLog, start } from "./util.ts";
 
 // Set NODE_ENV to production if not set
 if (!process.env.NODE_ENV) {
@@ -16,7 +16,8 @@ log.info(`Log level: ${logLevel}`);
 checkDenoVersion();
 
 // Check if the shell is cmd.exe
-if (!process.env.ComSpec?.endsWith("cmd.exe")) {
+// Since Demo version is running on a Debian Container, it is allowed.
+if (!process.env.ComSpec?.endsWith("cmd.exe") && !isDemo()) {
     log.error("Your ComSpec do not set to cmd.exe.");
     Deno.exit(1);
 }

@@ -17,6 +17,14 @@ AkaiGrid is a fancy frontend for browsing your video folders on Windows.
 - 🪟 Sets Grid view, List view, and sorting options for each folder
 - 📦 Portable
 
+## Demo
+
+You can feel it by visiting the demo site, but there is no actual video content.
+
+Please note that AkaiGrid is a local app, you need to download and run it on your own computer to have the full experience.
+
+[https://akaigrid.kuma.pet](https://akaigrid.kuma.pet/list/**app**videos)
+
 ## Requirements
 
 - Windows 10 or 11 (x64)
@@ -26,19 +34,20 @@ AkaiGrid is a fancy frontend for browsing your video folders on Windows.
 - (Optional) [K-Lite Codec Pack](https://codecguide.com/download_kl.htm) - `Full` version is recommended, includes MPC-HC
 - (Optional) [MPC-HC extra settings - improve user experience]()
 
-## Installation
+## How to Use
 
 ### Method 1: Download the compiled binary (.exe)
 
-1. Download []()
-2. Edit `config.yaml` to set your video folder paths
+1. Download [akaigrid-win-x64.7z](https://github.com/louislam/akaigrid/releases/latest)
+2. Decompress with 7-Zip or WinRAR
+3. Edit `config.yaml` to set your video folder paths
 
    ```yaml
    folders:
        - C:\My Videos Folder
        - \\SMB\My Videos Folder
    ```
-3. Run `AkaiGrid.exe` to start the server
+4. Run `AkaiGrid.exe` to start the server
 
 ### Method 2: Run the source code using Deno
 
@@ -88,6 +97,10 @@ I also wanted to try developing with Deno 2 and learn the Vue 3 Composition API 
 Akai (赤い / あかい / a-ka-i) is a Japanese word meaning "red". It is an adjective. So AkaiGrid means "Red Grid".
 
 Why red? I don't know, but some popular online video platforms are also red, haha.
+
+### How to refresh cached thumbnails in browser?
+
+Ctrl + F5 in your browser.
 
 ### Can I use it on my phone?
 

@@ -1,6 +1,6 @@
 import * as fs from "@std/fs";
 import * as path from "@std/path";
-import { AkaiGridConfig, AkaiGridConfigSchema, isDev, isSamePath, isSubPath, log, start, videoExtensions } from "./util.ts";
+import { AkaiGridConfig, AkaiGridConfigSchema, isDemo, isDev, isSamePath, isSubPath, log, start, videoExtensions } from "./util.ts";
 import * as yaml from "jsr:@std/yaml";
 import { Entry } from "./entry.ts";
 import { closeKv, initKv, kv, kvDeletePrefix } from "./db/kv.ts";
@@ -116,6 +116,15 @@ export class AkaiGrid {
     async getDirConfig(dir: string): Promise<DirConfig> {
         this.checkAllowedPath(dir);
 
+        // Demo
+        if (isDemo()) {
+            if (dir === "/app/videos") {
+                return DirConfigSchema.parse({
+                    view: "grid",
+                });
+            }
+        }
+
         // Find in KV
         const dirConfigEntry = await kv().get(["dirConfig", dir]);
 
@@ -128,6 +137,10 @@ export class AkaiGrid {
     }
 
     async setDirConfig(dir: string, dirConfig: DirConfig) {
+        if (isDemo()) {
+            log.debug("Skipping setDirConfig in demo mode");
+            return;
+        }
         this.checkAllowedPath(dir);
         await kv().set(["dirConfig", dir], dirConfig);
     }
@@ -236,6 +249,8 @@ export class AkaiGrid {
         const resolvedDir = path.parse(path.resolve(p)).dir;
         const dir = path.parse(p).dir;
 
+        log.debug(`Resolved dir: ${resolvedDir}, dir: ${dir}`);
+
         // Check if the path contains ".." that resolves to a different directory
         if (resolvedDir !== dir) {
             log.debug(`Path ${p} contains ".." or ".", which is not allowed.`);
@@ -287,8 +302,13 @@ export class AkaiGrid {
         log.info("Closing KV...");
         await closeKv();
 
+        log.info("Closing config file watcher...");
         this.configFileWatcher.close();
+
+        log.info("Clearing all stat cache...");
         await clearAllStatCache();
+
+        log.info("AkaiGrid closed.");
     }
 
     /**

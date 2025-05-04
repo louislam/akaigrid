@@ -458,6 +458,10 @@ async function setDone(item) {
                 <ItemFile v-if="item.isFile" :item="item" :lazy-load="index >= 5" :view="dirConfig.view" :itemSize="dirConfig.itemSize" @contextmenu.prevent="setDone(item)" />
             </div>
         </div>
+
+        <div v-if="!loadingFull && !loading && Object.values(list).length == 0" class="text-center my-5">
+            No items
+        </div>
     </div>
 </template>
 
