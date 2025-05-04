@@ -17,6 +17,14 @@ AkaiGrid is a fancy frontend for browsing your video folders on Windows.
 - 🪟 Sets Grid view, List view, and sorting options for each folder
 - 📦 Portable
 
+## Demo
+
+You can feel it by visiting the demo site, but there is no actual video content.
+
+Please note that AkaiGrid is a local app, you need to download and run it on your own computer to have the full experience.
+
+[https://akaigrid.kuma.pet](https://akaigrid.kuma.pet/list/**app**videos)
+
 ## Requirements
 
 - Windows 10 or 11 (x64)
@@ -26,7 +34,7 @@ AkaiGrid is a fancy frontend for browsing your video folders on Windows.
 - (Optional) [K-Lite Codec Pack](https://codecguide.com/download_kl.htm) - `Full` version is recommended, includes MPC-HC
 - (Optional) [MPC-HC extra settings - improve user experience]()
 
-## Installation
+## How to Use
 
 ### Method 1: Download the compiled binary (.exe)
 
