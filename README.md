@@ -38,7 +38,7 @@ Please note that AkaiGrid is a local app, you need to download and run it on you
 
 ### Method 1: Download the compiled binary (.exe)
 
-1. Download [akaigrid-win-x64.7z](https://github.com/louislam/uptime-kuma/releases/latest)
+1. Download [akaigrid-win-x64.7z](https://github.com/louislam/akaigrid/releases/latest)
 2. Decompress with 7-Zip or WinRAR
 3. Edit `config.yaml` to set your video folder paths
 
