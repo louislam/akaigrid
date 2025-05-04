@@ -60,7 +60,7 @@
     // All production dependencies must be listed here, do not put them in package.json
     // And dev dependencies must be listed in `package.json` and `package-dev.json`, do not put them here
     "imports": {
-        "@lambdalisue/ttl-cache": "jsr:@lambdalisue/ttl-cache@^1.0.0",
+        "@lambdalisue/ttl-cache": "jsr:@lambdalisue/ttl-cache@~1.0.0",
         "@louislam/deno-serve-router": "jsr:@louislam/deno-serve-router@~1.0.1",
         "@std/fs": "jsr:@std/fs@^1.0.16",
         "@std/http": "jsr:@std/http@^1.0.14",
