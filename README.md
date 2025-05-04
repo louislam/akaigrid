@@ -32,7 +32,7 @@ Please note that AkaiGrid is a local app, you need to download and run it on you
 - Your favorite video player (MPC-HC is recommended)
 - Resolution: 1920x1080 (100 dpi) or higher
 - (Optional) [K-Lite Codec Pack](https://codecguide.com/download_kl.htm) - `Full` version is recommended, includes MPC-HC
-- (Optional) [MPC-HC extra settings - improve user experience]()
+- (Optional) [MPC-HC extra settings - improve user experience](https://github.com/louislam/akaigrid/wiki/MPC%E2%80%90HC-Settings)
 
 ## How to Use
 
