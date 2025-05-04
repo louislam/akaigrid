@@ -26,7 +26,7 @@ export async function pack() {
     const targetDirCWD = "./AkaiGrid";
     const exe7zr = "../tools/7zr.exe";
     const outputCWD = `./akaigrid-win-x64.7z`;
-    const level = 4;
+    const level = 9;
 
     const targetDir = path.join(cwd, targetDirCWD);
     const output = path.join(cwd, outputCWD);
@@ -45,10 +45,6 @@ export async function pack() {
 
     // Create the target directory
     await fs.ensureDir(targetDir);
-
-    // Workaround to keep the folder structure, don't ask me why 7zr is so hard to be used.
-    // Create a text file in targetTempDir
-    //await Deno.writeTextFile(path.join(targetTempDir, "support.txt"), "7zr, please use this file to keep the folder structure!!!");
 
     // Copy the files to the target directory
     for (const [src, dest] of fileList) {
@@ -69,7 +65,7 @@ export async function pack() {
         targetDirCWD,
     ];
 
-    let cmd = new Deno.Command(exe7zr, {
+    const cmd = new Deno.Command(exe7zr, {
         args: args,
         stdout: "inherit",
         stderr: "inherit",

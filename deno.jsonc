@@ -67,5 +67,25 @@
         "@std/yaml": "jsr:@std/yaml@^1.0.5",
         "zod": "npm:zod@~3.24.3",
         "natural-orderby": "npm:natural-orderby@~5.0.0"
+    },
+
+    // Lint
+    "lint": {
+        "exclude": [
+            // All _test.ts files
+            "./backend/**/*_test.ts",
+            "./extra/downloader.ts"
+            //"./frontend/**/*",
+            //"./extra/**/*"
+        ],
+        "rules": {
+            "tags": ["recommended"],
+            "exclude": [
+                "prefer-const",
+                "no-process-global",
+                "require-await",
+                "no-unused-vars"
+            ]
+        }
     }
 }
