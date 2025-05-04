@@ -459,7 +459,7 @@ async function setDone(item) {
             </div>
         </div>
 
-        <div v-if="!loadingFull && list.length === 0" class="text-center my-3">
+        <div v-if="!loadingFull && !loading && Object.values(list).length == 0" class="text-center my-5">
             No items
         </div>
     </div>
