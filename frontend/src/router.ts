@@ -36,9 +36,9 @@ export const router = createRouter({
     routes,
     async scrollBehavior(to, from, savedPosition) {
         if (savedPosition) {
-            console.log("Restoring scroll position:", savedPosition);
-
             while (true) {
+                await sleep(500);
+
                 // @ts-ignore document must be defined in browser
                 let element = document.querySelectorAll(".item");
 
@@ -46,8 +46,6 @@ export const router = createRouter({
                     savedPosition.behavior = "instant";
                     return savedPosition;
                 }
-
-                await sleep(100);
             }
         } else {
             return { top: 0 }; // Default behavior

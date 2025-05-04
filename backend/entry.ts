@@ -120,10 +120,7 @@ export class Entry {
         }
 
         const id = await this.getID();
-
-        devLogTime("getMPCHCMediaHistory " + id);
         const seconds = getMPCHCMediaHistory(allMediaHistory, this.absolutePath);
-        devLogTimeEnd("getMPCHCMediaHistory " + id);
 
         if (seconds === -1) {
             // It is possible that MPC-HC removed the entry from the history
