@@ -22,3 +22,7 @@ export async function statCache(path: string): Promise<Deno.FileInfo> {
 export async function clearStatCache(path: string) {
     cache.delete(path);
 }
+
+export async function clearAllStatCache() {
+    cache.clear();
+}

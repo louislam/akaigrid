@@ -3,6 +3,7 @@ import { Entry } from "./entry.ts";
 import * as path from "@std/path";
 import { Buffer } from "node:buffer";
 import { AkaiGrid } from "./akaigrid.ts";
+import { clearAllStatCache } from "./file-stat.ts";
 
 const akaiGrid: AkaiGrid = await AkaiGrid.createInstance("./tmp");
 
@@ -37,6 +38,9 @@ Deno.test("Test hash", async () => {
 
     // Ends with id
     assertEquals(id.endsWith("_" + hexSize), true);
+
+    // Since getID triggers statCache, we need to clear the cache
+    await clearAllStatCache();
 
     // TODO test hashed absolutePath, but absolutePath is different in different machines, no idea how to test it.
 });
