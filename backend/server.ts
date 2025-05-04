@@ -1,7 +1,7 @@
 import * as fs from "@std/fs";
 import { AkaiGrid } from "./akaigrid.ts";
 import { Router } from "@louislam/deno-serve-router";
-import { allowDevAllOrigin, devLogTime, devLogTimeEnd, getFrontendDir, isDev, log, sleep } from "./util.ts";
+import { allowDevAllOrigin, devLogTime, devLogTimeEnd, getFrontendDir, isDev, log, placeholderImagePath, sleep } from "./util.ts";
 import * as path from "@std/path";
 import { serveDir, serveFile } from "@std/http/file-server";
 import { DirConfigSchema, EntryDisplayObject, ObjectAsArray } from "../common/util.ts";
@@ -59,6 +59,7 @@ export class Server {
             return res;
         });
 
+        // List Home entries
         this.router.add("GET", "/api/home", async (_req) => {
             // Home is not configurable now, return default config
             const dirConfig = DirConfigSchema.parse({});
@@ -196,6 +197,7 @@ export class Server {
             }
         });
 
+        // Generate thumbnail
         this.router.add("GET", "/api/thumbnail/:path", async (req, params) => {
             try {
                 const path = params.path;
@@ -206,13 +208,16 @@ export class Server {
 
                 const entry = await this.akaiGrid.getEntry(path);
                 const thumbnailPath = await entry.generateThumbnail();
-                const res = await serveFile(req, thumbnailPath);
-                const s = 86400 * 30; // cache 30 days
-                res.headers.set("Cache-Control", `public, max-age=${s}`);
+                const res = serveFile(req, thumbnailPath);
+
+                res.then((res) => {
+                    const s = 86400 * 30; // cache 30 days
+                    res.headers.set("Cache-Control", `public, max-age=${s}`);
+                });
 
                 return res;
             } catch (error) {
-                return this.errorResponse(error);
+                return serveFile(req, placeholderImagePath);
             }
         });
     }

@@ -2,7 +2,7 @@ import * as path from "@std/path";
 import crypto from "node:crypto";
 import { AkaiGrid } from "./akaigrid.ts";
 import * as fs from "@std/fs";
-import { devLogTime, devLogTimeEnd, generateThumbnail, getFrontendDir, getVideoInfo, log } from "./util.ts";
+import { devLogTime, devLogTimeEnd, generateThumbnail, getFrontendDir, getVideoInfo, log, placeholderImagePath } from "./util.ts";
 import { kv } from "./db/kv.ts";
 import { EntryDisplayObject, ObjectAsArray, VideoInfo, VideoInfoSchema } from "../common/util.ts";
 import * as naturalOrderBy from "natural-orderby";
@@ -96,17 +96,15 @@ export class Entry {
             // Natural order by name
             entryList = naturalOrderBy.orderBy(entryList, (entry) => entry.name);
 
-            const placeholderPath = path.join(getFrontendDir(), "1x1.png");
-
             for (const entry of entryList) {
                 const path = await entry.generateThumbnail();
-                if (path !== placeholderPath) {
+                if (path !== placeholderImagePath) {
                     return path;
                 }
             }
 
-            log.debug("No files in directory, using placeholder: " + placeholderPath);
-            return placeholderPath;
+            log.debug("No files in directory, using placeholder: " + placeholderImagePath);
+            return placeholderImagePath;
         } else {
             throw new Error("Not a file or directory");
         }
