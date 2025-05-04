@@ -7,6 +7,7 @@ import { kv } from "./db/kv.ts";
 import { EntryDisplayObject, ObjectAsArray, VideoInfo, VideoInfoSchema } from "../common/util.ts";
 import * as naturalOrderBy from "natural-orderby";
 import { getMPCHCMediaHistory } from "./history.ts";
+import { statCache } from "./file-stat.ts";
 
 export class Entry {
     name: string;
@@ -30,7 +31,7 @@ export class Entry {
 
     async getStat() {
         if (!this.stat) {
-            this.stat = await Deno.stat(this.absolutePath);
+            this.stat = await statCache(this.absolutePath);
         }
         return this.stat;
     }

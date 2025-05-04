@@ -32,6 +32,7 @@ AkaiGrid is a fancy frontend for browsing your video folders on Windows.
 
 1. Download []()
 2. Edit `config.yaml` to set your video folder paths
+
    ```yaml
    folders:
        - C:\My Videos Folder

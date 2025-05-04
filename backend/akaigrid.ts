@@ -5,6 +5,7 @@ import * as yaml from "jsr:@std/yaml";
 import { Entry } from "./entry.ts";
 import { closeKv, initKv, kv, kvDeletePrefix } from "./db/kv.ts";
 import { DirConfig, DirConfigSchema } from "../common/util.ts";
+import { clearStatCache } from "./file-stat.ts";
 
 export class AkaiGrid {
     appDataDir: string;
@@ -218,6 +219,7 @@ export class AkaiGrid {
         log.debug(`Bringing folder ${dir} to top`);
         const now = new Date();
         await Deno.utime(dir, now, now);
+        await clearStatCache(dir);
     }
 
     /**
