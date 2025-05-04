@@ -90,7 +90,6 @@ Playback position and mark as watched features:
 
 <img src="https://github.com/user-attachments/assets/5866abc8-6113-4875-8753-61e082e8e452" width="600" />
 
-
 ## Motivation
 
 I used Jellyfin and Chromecast (with Google TV) to stream videos to my TV for a while. Jellyfin is great, but I faced issues with subtitles, fonts, naming, and audio sync. At times, I spent more time
