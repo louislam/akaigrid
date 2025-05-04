@@ -10,6 +10,7 @@ services:
             - "60001:60001"
         environment:
             - NODE_ENV=demo
+        restart: unless-stopped
     cloudflared:
         image: cloudflare/cloudflared:latest
         command: tunnel --no-autoupdate run --token ${TUNNEL_TOKEN}
