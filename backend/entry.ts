@@ -225,9 +225,19 @@ export class Entry {
         };
 
         if (extraInfo) {
+            let videoInfo;
+
+            // ffprobe can throw an error, but we don't want to stop the whole process, so catch it
+            try {
+                videoInfo = await this.getVideoInfo();
+            } catch (error) {
+                log.error("Error getting video info: " + error);
+                videoInfo = undefined;
+            }
+
             const extraObj = {
                 lastPosition: await this.getLastPosition(allMediaHistory),
-                videoInfo: await this.getVideoInfo(),
+                videoInfo,
             };
 
             obj = {
