@@ -7,6 +7,7 @@ import { kv } from "./db/kv.ts";
 import { EntryDisplayObject, ObjectAsArray, VideoInfo, VideoInfoSchema } from "../common/util.ts";
 import * as naturalOrderBy from "natural-orderby";
 import { getMPCHCMediaHistory } from "./history.ts";
+import { statCache } from "./file-stat.ts";
 
 export class Entry {
     name: string;
@@ -30,7 +31,7 @@ export class Entry {
 
     async getStat() {
         if (!this.stat) {
-            this.stat = await Deno.stat(this.absolutePath);
+            this.stat = await statCache(this.absolutePath);
         }
         return this.stat;
     }
@@ -119,10 +120,7 @@ export class Entry {
         }
 
         const id = await this.getID();
-
-        devLogTime("getMPCHCMediaHistory " + id);
         const seconds = getMPCHCMediaHistory(allMediaHistory, this.absolutePath);
-        devLogTimeEnd("getMPCHCMediaHistory " + id);
 
         if (seconds === -1) {
             // It is possible that MPC-HC removed the entry from the history
