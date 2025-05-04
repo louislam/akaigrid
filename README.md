@@ -4,18 +4,18 @@ AkaiGrid is a fancy frontend for browsing your video folders on Windows.
 
 ## Features
 
-- Fancy UI - displays your video libraries in a fancy layout
-- Respects your folder structure
-- Support local and network drives (SMB)
-- Launches video in your favorite video player
-- Generates thumbnails for each video and folder
+- ✨ Fancy UI - displays your video libraries in a fancy layout
+- 📂 Respects your folder structure
+- 🚗 Support local and network drives (SMB)
+- 📺 Launches video in your favorite video player
+- 🖼️ Generates thumbnails for each video and folder
   - Supports `cover.jpg` / `cover.png` for folders
-- Tracks your watched status easily
-  - Display the last playback position of videos (MPC-HC only)
-  - Mark videos as "watched/done" by right-clicking
-  - Highlights episode numbers in filenames for easier reading
-- Sets Grid view, List view, and sorting options for each folder
-- Portable
+- 🛤️ Tracks your watched status easily
+  - ⏯️ Display the last playback position of videos (MPC-HC only)
+  - ✅ Mark videos as "watched/done" by right-clicking
+  - 🔢 Highlights episode numbers in filenames for easier reading
+- 🪟 Sets Grid view, List view, and sorting options for each folder
+- 📦 Portable
 
 ## Requirements
 

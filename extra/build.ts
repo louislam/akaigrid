@@ -20,22 +20,39 @@ export function build() {
 }
 
 export async function pack() {
-    const fileList = [
-        "backend",
-        "common",
-        "./extra",
-        "./frontend-dist",
-        "./tools/ffmpeg",
-        "./config-template.yaml",
-        "./AkaiGrid.exe",
-        "LICENSE",
-    ];
+    const cwd = "./build/";
 
-    const exe7zr = "./tools/7zr.exe";
-    const output = `./build/akaigrid-win-x64.7z`;
+    // These variables are assume the cwd is ./build
+    const targetDirCWD = "./AkaiGrid";
+    const exe7zr = "../tools/7zr.exe";
+    const outputCWD = `./akaigrid-win-x64.7z`;
     const level = 9;
 
-    // remove if exists
+    const targetDir = path.join(cwd, targetDirCWD);
+    const output = path.join(cwd, outputCWD);
+
+    const fileList = [
+        ["./frontend-dist", "./frontend-dist"],
+        ["./tools/ffmpeg", "./tools/ffmpeg"],
+        ["./config-template.yaml", "./config.yaml"],
+        ["./AkaiGrid.exe", "./AkaiGrid.exe"],
+    ];
+
+    // Clean up the target directory
+    if (await fs.exists(targetDir)) {
+        await Deno.remove(targetDir, { recursive: true });
+    }
+
+    // Create the target directory
+    await fs.ensureDir(targetDir);
+
+    // Copy the files to the target directory
+    for (const [src, dest] of fileList) {
+        const destPath = path.join(targetDir, dest);
+        await fs.copy(src, destPath);
+    }
+
+    // Remove if exists
     if (await fs.exists(output)) {
         await Deno.remove(output);
     }
@@ -44,43 +61,28 @@ export async function pack() {
         "a",
         `-mx=${level}`,
         "-mmt=on",
-        output,
-        ...fileList,
+        outputCWD,
+        targetDirCWD,
     ];
 
-    let cmd = new Deno.Command(exe7zr, {
+    const cmd = new Deno.Command(exe7zr, {
         args: args,
         stdout: "inherit",
         stderr: "inherit",
+        cwd: cwd,
     });
 
     const { code } = await cmd.output();
 
-    // Add config-template.yaml as config.yaml to the 7z file
-    cmd = new Deno.Command(exe7zr, {
-        args: [
-            "rn",
-            output,
-            "config-template.yaml",
-            "config.yaml",
-        ],
-        stdout: "inherit",
-        stderr: "inherit",
-    });
-    await cmd.output();
+    if (code !== 0) {
+        log.error("Error while packing the files");
+        Deno.exit(1);
+    }
 
-    // Unfortunately, 7z cannot preserve the subdirectory structure, I need to correct it manually
-    cmd = new Deno.Command(exe7zr, {
-        args: [
-            "rn",
-            output,
-            "ffmpeg",
-            "tools/ffmpeg",
-        ],
-        stdout: "inherit",
-        stderr: "inherit",
-    });
-    await cmd.output();
+    // Clean up the target directory
+    if (await fs.exists(targetDir)) {
+        await Deno.remove(targetDir, { recursive: true });
+    }
 }
 
 export function denoInstall() {

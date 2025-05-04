@@ -33,5 +33,8 @@ jobs:
             - name: Check
               run: deno task check
 
+            - name: Lint
+              run: deno task lint
+
             - name: Test
               run: deno task test

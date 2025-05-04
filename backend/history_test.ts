@@ -7,6 +7,6 @@ Deno.test.ignore("test getAllMPCHCMediaHistory", async () => {
 });
 
 Deno.test.ignore("test getMPCHCMediaHistory", async () => {
-    let result = await getMPCHCMediaHistory(allMediaHistory, "\\\\UNRAID\\Videos\\Every Little Thing - fragile.webm");
+    let result = getMPCHCMediaHistory(allMediaHistory, "\\\\UNRAID\\Videos\\Every Little Thing - fragile.webm");
     console.log(result);
 });

@@ -42,8 +42,11 @@
         // Check backend code
         "check": "deno check ./backend",
 
-        // (DEV ONLY) Pack the app into a 7z file, also includes nessecary tools like ffmpeg, ffprobe, etc.
-        "pack": "deno run --allow-all ./extra/pack.ts"
+        // (DEV ONLY) Pack the app into a 7z file, also includes necessary tools like ffmpeg, ffprobe, etc.
+        "pack": "deno run --allow-all ./extra/pack.ts",
+
+        // Lint
+        "lint": "deno lint"
     },
 
     // Run `deno fmt` to format your code
@@ -67,5 +70,25 @@
         "@std/yaml": "jsr:@std/yaml@^1.0.5",
         "zod": "npm:zod@~3.24.3",
         "natural-orderby": "npm:natural-orderby@~5.0.0"
+    },
+
+    // Lint
+    "lint": {
+        "exclude": [
+            // All _test.ts files
+            "./backend/**/*_test.ts",
+            "./extra/downloader.ts"
+            //"./frontend/**/*",
+            //"./extra/**/*"
+        ],
+        "rules": {
+            "tags": ["recommended"],
+            "exclude": [
+                "prefer-const",
+                "no-process-global",
+                "require-await",
+                "no-unused-vars"
+            ]
+        }
     }
 }

@@ -39,6 +39,7 @@ export const router = createRouter({
             console.log("Restoring scroll position:", savedPosition);
 
             while (true) {
+                // @ts-ignore document must be defined in browser
                 let element = document.querySelectorAll(".item");
 
                 if (element.length > 0) {

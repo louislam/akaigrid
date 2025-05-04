@@ -41,6 +41,8 @@ export const appVersion = version;
 // better for auto import for IDE
 export { log };
 
+export const placeholderImagePath = path.join(getFrontendDir(), "1x1.png");
+
 // Define the schema matching AkaiGridConfig
 export const AkaiGridConfigSchema = z.object({
     host: z.string().default("127.0.0.1"),

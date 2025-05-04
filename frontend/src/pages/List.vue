@@ -352,13 +352,16 @@ async function setDone(item) {
     const currentDone = item.done;
     // Flip it
     const yes = !currentDone;
+
+    // Update the item
+    item.done = yes;
+
     const response = await fetch(baseURL + "/api/done/" + encodeURIComponent(item.absolutePath) + "/" + yes, {
         method: "POST",
     });
-    if (response.ok) {
-        // Update the item
-        item.done = yes;
-    } else {
+    if (!response.ok) {
+        // Revert the item
+        item.done = currentDone;
         notify({
             title: "Failed to set done",
             type: "error",
