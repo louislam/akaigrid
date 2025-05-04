@@ -4,7 +4,6 @@ AkaiGrid is a fancy frontend for browsing your video folders on Windows.
 
 ![](https://github.com/user-attachments/assets/1d5c2191-b0a8-4c6c-9b00-9f34b666203a)
 
-
 ## Features
 
 - ✨ Fancy UI - displays your video libraries in a fancy layout
