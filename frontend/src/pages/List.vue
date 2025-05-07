@@ -276,37 +276,40 @@ async function updateDirConfig() {
 
 // history api previous page
 function previous() {
-    // Check if previous page is our website
-    if (historyLength.value > 0) {
-        const previousUrl = window.history.state?.url;
-        if (previousUrl && previousUrl.startsWith(baseURL)) {
-            // Go back to the previous page
-            router.back();
-            return;
-        }
-    }
-
     router.back();
 }
 
 function forward() {
+    console.log(window.history.state?.back);
+
     router.forward();
 }
 
 function upper() {
+    const historyBackPath = window.history.state?.back;
+
+    console.log(historyBackPath);
+
     // vue router go to previousDir
     if (previousDir.value) {
-        router.push({
-            name: "list",
-            params: {
-                requestPath: encodeRequestPath(previousDir.value),
-            },
-        });
+        const targetPath = "/list/" + encodeRequestPath(previousDir.value);
+
+        // Since we want to keep the scroll position, if they are same, use history.back().
+        if (historyBackPath === targetPath) {
+            router.back();
+        } else {
+            router.push(targetPath);
+        }
     } else {
-        // go to home
-        router.push({
-            name: "home",
-        });
+        // Since we want to keep the scroll position, if they are same, use history.back().
+        if (historyBackPath === "/") {
+            router.back();
+        } else {
+            // go to home
+            router.push({
+                name: "home",
+            });
+        }
     }
 }
 
