@@ -280,15 +280,11 @@ function previous() {
 }
 
 function forward() {
-    console.log(window.history.state?.back);
-
     router.forward();
 }
 
 function upper() {
     const historyBackPath = window.history.state?.back;
-
-    console.log(historyBackPath);
 
     // vue router go to previousDir
     if (previousDir.value) {
