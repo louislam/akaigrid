@@ -247,6 +247,8 @@ export async function generateThumbnail(videoPath: string, thumbnailPath: string
     // The 20% of the video duration
     const target = Math.floor(duration * 0.2);
 
+    const targetWidth = 512;
+
     command = new Deno.Command(ffmpeg, {
         args: [
             "-ss",
@@ -254,7 +256,11 @@ export async function generateThumbnail(videoPath: string, thumbnailPath: string
             "-i",
             videoPath,
             "-vf",
-            "scale=512:-1",
+            // Generate thumbnail's width is always fixed
+            // SAR = Storage Aspect Ratio, some videos let's say original resolution is 1440x1080, but the video is 16:9, so the SAR is 1.3333
+            // Width: 512px
+            // Height Formula = Height * (512 / Width) * (1 / SAR)
+            `scale=${targetWidth}:ih*(1/sar)*(${targetWidth}/iw)`,
             "-vframes",
             "1",
             thumbnailPath,
