@@ -69,7 +69,7 @@ Extra requirements:
    ```bash
    git clone https://github.com/louislam/akaigrid
    cd akaigrid
-   git checkout 1.0.0
+   git checkout 1.0.1
    deno task setup
    ```
 
