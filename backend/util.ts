@@ -9,6 +9,7 @@ import { VideoInfo } from "../common/util.ts";
 import { fileURLToPath } from "node:url";
 import * as jsonc from "@std/jsonc";
 import * as semver from "@std/semver";
+import * as fs from "@std/fs";
 
 // @types packages list here
 import type {} from "npm:@types/winreg";
@@ -52,6 +53,7 @@ export const AkaiGridConfigSchema = z.object({
     launchBrowser: z.boolean().default(true),
     bringFolderToTop: z.boolean().default(false),
     bringFolderToTopDone: z.boolean().default(false),
+    updateDateAccessed: z.boolean().default(false),
 });
 
 // Infer the type from the schema (matches AkaiGridConfig)
@@ -369,5 +371,18 @@ export function checkDenoVersion() {
         log.error("Your Deno version is " + Deno.version.deno);
         log.error(`Deno version >= ${requiredDenoVersion} is required.`);
         Deno.exit(1);
+    }
+}
+
+export async function isFileLocked(filePath: string): Promise<boolean> {
+    try {
+        const file = await Deno.open(filePath, { write: true }); // Try opening for writing
+        file.close(); // Close immediately if successful
+        return false; // File is not locked
+    } catch (err) {
+        if (err instanceof Deno.errors.PermissionDenied || err instanceof Deno.errors.Busy) {
+            return true; // File is locked
+        }
+        throw err; // Rethrow other unexpected errors
     }
 }

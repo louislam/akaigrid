@@ -190,7 +190,7 @@ export class Entry {
     async toDisplayObject(extraInfo: boolean, allMediaHistory: ObjectAsArray<number> = {}): Promise<EntryDisplayObject> {
         let stat;
         let name = this.name;
-        let dateModified: string;
+        let dateAccessed: string;
         let size: number;
         let done: boolean;
 
@@ -200,17 +200,17 @@ export class Entry {
             size = stat.size;
             done = await this.getDone();
 
-            if (stat.mtime === null) {
-                dateModified = new Date(0).toJSON();
+            if (stat.atime === null) {
+                dateAccessed = new Date(0).toJSON();
             } else {
-                dateModified = stat.mtime?.toJSON();
+                dateAccessed = stat.atime?.toJSON();
             }
         } catch (_) {
             // Probably not exist, but still return a valid object for Home
             name = `[Not Found] ${name}`;
             size = -1;
             done = false;
-            dateModified = new Date(0).toJSON();
+            dateAccessed = new Date(0).toJSON();
         }
 
         let obj = {
@@ -219,7 +219,7 @@ export class Entry {
             isFile: this.isFile,
             absolutePath: this.absolutePath,
             size,
-            dateModified,
+            dateAccessed,
             done,
             extraInfo: {},
         };

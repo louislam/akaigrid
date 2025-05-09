@@ -11,8 +11,8 @@ folders:
     - C:\MyExampleVideosFolder
     - C:\MyExampleMoviesFolder
 
-# After opened a video or set a video to be done, modify its folder's last modified date to now.
-# So that the folder will be in the top of the list, it will be more convenient to find the series next time if the folder is sorted by "Date Modified / Desc".
+# After opened a video or set a video to be done, modify its folder's last access date to now.
+# So that the folder will be in the top of the list, it will be more convenient to find the series next time if the folder is sorted by "Date Accessed / Desc".
 # (true or false) (default: false)
 #bringFolderToTop: false
 
@@ -35,3 +35,10 @@ folders:
 # ⚠️ Expose it to the internet is dangerous! ⚠️ Don't touch this unless you know what you're doing!
 # (string) (default: 127.0.0.1)
 #host: 127.0.0.1
+
+##### Since 1.0.2
+
+# Update Date accessed to now when the video is opened?
+# So that the video file will be in the top of the list, it will be more convenient to find the video if the folder is sorted by "Date Accessed / Desc".
+# (true or false) (default: false)
+updateDateAccessed: false

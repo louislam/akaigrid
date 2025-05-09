@@ -27,7 +27,7 @@ export function objectAsArrayToArray<T>(obj: ObjectAsArray<T>): T[] {
 
 // Dir Config (sort, order, view, item size)
 export const DirConfigSchema = z.object({
-    sort: z.enum(["name", "size", "dateModified"]).default("name"),
+    sort: z.enum(["name", "size", "dateModified", "dateAccessed"]).default("name"),
     order: z.enum(["asc", "desc"]).default("asc"),
     view: z.enum(["list", "grid"]).default("list"),
     itemSize: z.enum(["small", "medium", "large"]).default("medium"),
@@ -49,7 +49,7 @@ export const EntryDisplayObjectSchema = z.object({
     absolutePath: z.string(),
     done: z.boolean(),
     size: z.number(),
-    dateModified: z.string(),
+    dateAccessed: z.string(),
     extraInfo: z.object({
         lastPosition: z.number().optional(),
         videoInfo: VideoInfoSchema.optional(),
@@ -120,28 +120,28 @@ export function sortArray(inputArray: EntryDisplayObject[], dirConfig: DirConfig
         } else {
             list = naturalOrderBy.orderBy(inputArray, (entry) => entry.name, "desc");
         }
-    } else if (sort === "dateModified") {
+    } else if (sort === "dateAccessed" || sort === "dateModified") { // dateModified is for backward compatibility
         const pairList = [];
         for (const entry of inputArray) {
             pairList.push({
                 entry,
-                dateModified: entry.dateModified,
+                dateAccessed: entry.dateAccessed,
             });
         }
 
         pairList.sort((a, b) => {
-            if (!a.dateModified) {
+            if (!a.dateAccessed) {
                 return 1;
             }
 
-            if (!b.dateModified) {
+            if (!b.dateAccessed) {
                 return -1;
             }
 
             if (order === "asc") {
-                return new Date(a.dateModified).getTime() - new Date(b.dateModified).getTime();
+                return new Date(a.dateAccessed).getTime() - new Date(b.dateAccessed).getTime();
             } else {
-                return new Date(b.dateModified).getTime() - new Date(a.dateModified).getTime();
+                return new Date(b.dateAccessed).getTime() - new Date(a.dateAccessed).getTime();
             }
         });
 

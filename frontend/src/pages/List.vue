@@ -124,7 +124,7 @@ async function sortByName() {
 }
 
 async function sortByDate() {
-    dirConfig.value.sort = "dateModified";
+    dirConfig.value.sort = "dateAccessed";
     await updateDirConfig();
 }
 
@@ -397,7 +397,7 @@ async function setDone(item) {
 
                 <BButtonGroup v-if="isList">
                     <BButton @click="sortByName" :active='dirConfig.sort === "name"'>A-Z</BButton>
-                    <BButton @click="sortByDate" :active='dirConfig.sort === "dateModified"'>Date Modified</BButton>
+                    <BButton @click="sortByDate" :active='dirConfig.sort === "dateAccessed"'>Date Accessed</BButton>
                 </BButtonGroup>
 
                 <BButtonGroup v-if="isList">
