@@ -2,7 +2,7 @@ import { Cache } from "jsr:@lambdalisue/ttl-cache";
 
 /**
  * TTL: 60s
- * Since file size and date modified are not changed frequently, we can cache the result for a while to improve performance within a short time.
+ * Since file size and date accessed are not changed frequently, we can cache the result for a while to improve performance within a short time.
  */
 const cache = new Cache<string, Deno.FileInfo>(60000);
 

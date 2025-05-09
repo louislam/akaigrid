@@ -1,11 +1,11 @@
 import * as fs from "@std/fs";
 import * as path from "@std/path";
-import { AkaiGridConfig, AkaiGridConfigSchema, isDemo, isDev, isSamePath, isSubPath, log, start, videoExtensions } from "./util.ts";
+import { AkaiGridConfig, AkaiGridConfigSchema, isDemo, isDev, isFileLocked, isSamePath, isSubPath, log, start, videoExtensions } from "./util.ts";
 import * as yaml from "jsr:@std/yaml";
 import { Entry } from "./entry.ts";
 import { closeKv, initKv, kv, kvDeletePrefix } from "./db/kv.ts";
 import { DirConfig, DirConfigSchema } from "../common/util.ts";
-import { clearAllStatCache, clearStatCache } from "./file-stat.ts";
+import { clearAllStatCache, clearStatCache, statCache } from "./file-stat.ts";
 
 export class AkaiGrid {
     appDataDir: string;
@@ -200,8 +200,14 @@ export class AkaiGrid {
         log.debug(`Opening path ${path}`);
         start(path);
 
+        // Also update the date accessed for the parent directory
         if (this.config.bringFolderToTop) {
             await this.bringFolderToTop(path);
+        }
+
+        // Update the date accessed
+        if (this.config.updateDateAccessed) {
+            await this.updateDateAccessed(path);
         }
     }
 
@@ -216,23 +222,38 @@ export class AkaiGrid {
         }
     }
 
+    async updateDateAccessed(p: string) {
+        this.checkAllowedPath(p);
+
+        // Check if the file locked first, because Deno.utime will never end if the file is locked
+        if (await isFileLocked(p)) {
+            log.warn(`${p} is locked. Skipping update date accessed.`);
+            return;
+        }
+
+        log.debug(`Updating date accessed for path ${p}`);
+        const stat = await statCache(p);
+        const accessTime = new Date();
+        const modifiedTime = (stat.mtime) ? stat.mtime : accessTime;
+        await Deno.utime(p, accessTime, modifiedTime);
+        log.debug(`Updated date accessed for path ${p} to ${accessTime}`);
+        await clearStatCache(p);
+    }
+
     async bringFolderToTop(p: string) {
         this.checkAllowedPath(p);
 
         const dir = path.dirname(p);
 
         // Check if the path is a directory
-        const stat = await Deno.stat(dir);
+        const stat = await statCache(dir);
         if (!stat.isDirectory) {
             log.debug(`Path ${dir} is not a directory. How could this possible?`);
             return;
-            // throw new Error(`Path ${path} is not a directory.`);
         }
 
         log.debug(`Bringing folder ${dir} to top`);
-        const now = new Date();
-        await Deno.utime(dir, now, now);
-        await clearStatCache(dir);
+        await this.updateDateAccessed(dir);
     }
 
     /**
