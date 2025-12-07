@@ -51,7 +51,7 @@ function getRequestPath() {
                 <font-awesome-icon :icon='["fas", "folder"]' class="mt-3 ms-3 folder-icon" />
                 <img loading="lazy" :src='baseURL + "/api/thumbnail/" + encodeURIComponent(props.item.absolutePath)' alt />
             </div>
-            <div class="mt-1">
+            <div class="mt-1 item-title">
                 {{ props.item.name }}
             </div>
         </router-link>

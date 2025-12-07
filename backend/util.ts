@@ -9,10 +9,6 @@ import { VideoInfo } from "../common/util.ts";
 import { fileURLToPath } from "node:url";
 import * as jsonc from "@std/jsonc";
 import * as semver from "@std/semver";
-import * as fs from "@std/fs";
-
-// @types packages list here
-import type {} from "npm:@types/winreg";
 
 /**
  * After compiled, some files are inside the executable, so the path is different

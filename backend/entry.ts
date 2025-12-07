@@ -200,10 +200,14 @@ export class Entry {
             size = stat.size;
             done = await this.getDone();
 
-            if (stat.atime === null) {
-                dateAccessed = new Date(0).toJSON();
+            const modifiedTime = (stat.mtime) ? stat.mtime : new Date(0);
+            const accessedTime = (stat.atime) ? stat.atime : new Date(0);
+
+            // use stat.mtime if mtime is more recent
+            if (modifiedTime > accessedTime) {
+                dateAccessed = modifiedTime.toJSON();
             } else {
-                dateAccessed = stat.atime?.toJSON();
+                dateAccessed = accessedTime.toJSON();
             }
         } catch (_) {
             // Probably not exist, but still return a valid object for Home

@@ -40,7 +40,7 @@ const array = computed(() => {
 
 <template>
     <span>
-        <span>
+        <span class="item-title">
             <template v-for="(item, index) in array" :key="index">
                 <span v-if="item.match(/^\d+$/)" class="highlight">{{ item }}</span>
                 <span v-else-if="index === array.length - 1" class="ext">{{ item }}</span>

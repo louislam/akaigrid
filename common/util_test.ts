@@ -1,5 +1,5 @@
 import { encodeRequestPath } from "./util.ts";
-import { assertEquals } from "jsr:@std/assert";
+import { assertEquals } from "jsr:@std/assert@^1.0.16";
 
 Deno.test("test", async () => {
     let result = encodeRequestPath("C:\\Program Files (x86)\\SamsungPrinterLiveUpdate");
