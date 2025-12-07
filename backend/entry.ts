@@ -209,7 +209,6 @@ export class Entry {
             } else {
                 dateAccessed = accessedTime.toJSON();
             }
-
         } catch (_) {
             // Probably not exist, but still return a valid object for Home
             name = `[Not Found] ${name}`;
