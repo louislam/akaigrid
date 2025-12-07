@@ -142,6 +142,10 @@ body {}
         }
     }
 
+    .item-title {
+        overflow-wrap: break-word;
+    }
+
     &:hover {
         background-color: lighten($akaigrid-dark, 10%);
     }
