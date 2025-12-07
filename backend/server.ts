@@ -179,7 +179,7 @@ export class Server {
                 return res;
             } catch (error) {
                 if (error instanceof Error) {
-                    console.log(error.message);
+                    log.error(error.message);
                 }
                 return this.errorResponse(error);
             }
