@@ -170,7 +170,7 @@ export class Server {
                 if (!path) {
                     return this.errorResponse(new Error("No path specified"));
                 }
-                console.log("Open:", path);
+                log.info("Open:", path);
                 await this.akaiGrid.open(path);
                 const res = Response.json({
                     status: true,
