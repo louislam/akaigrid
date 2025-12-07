@@ -1,4 +1,4 @@
-import { Cache } from "jsr:@lambdalisue/ttl-cache";
+import { Cache } from "jsr:@lambdalisue/ttl-cache@^1.0.0";
 
 /**
  * TTL: 60s

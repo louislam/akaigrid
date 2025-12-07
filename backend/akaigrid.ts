@@ -1,7 +1,7 @@
 import * as fs from "@std/fs";
 import * as path from "@std/path";
 import { AkaiGridConfig, AkaiGridConfigSchema, isDemo, isDev, isFileLocked, isSamePath, isSubPath, log, start, videoExtensions } from "./util.ts";
-import * as yaml from "jsr:@std/yaml";
+import * as yaml from "jsr:@std/yaml@^1.0.10";
 import { Entry } from "./entry.ts";
 import { closeKv, initKv, kv, kvDeletePrefix } from "./db/kv.ts";
 import { DirConfig, DirConfigSchema } from "../common/util.ts";
