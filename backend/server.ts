@@ -170,6 +170,7 @@ export class Server {
                 if (!path) {
                     return this.errorResponse(new Error("No path specified"));
                 }
+                console.log("Open:", path);
                 await this.akaiGrid.open(path);
                 const res = Response.json({
                     status: true,
@@ -177,6 +178,9 @@ export class Server {
                 allowDevAllOrigin(res);
                 return res;
             } catch (error) {
+                if (error instanceof Error) {
+                    console.log(error.message);
+                }
                 return this.errorResponse(error);
             }
         });
