@@ -1,4 +1,4 @@
-import { assertEquals, assertLess } from "jsr:@std/assert";
+import { assertEquals, assertLess } from "jsr:@std/assert@^1.0.16";
 import { escapeString, generateThumbnail, getRFEHash, getVideoInfo } from "./util.ts";
 import * as fs from "@std/fs";
 
