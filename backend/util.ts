@@ -50,6 +50,7 @@ export const AkaiGridConfigSchema = z.object({
     bringFolderToTop: z.boolean().default(false),
     bringFolderToTopDone: z.boolean().default(false),
     updateDateAccessed: z.boolean().default(false),
+    player: z.string().default(""),
 });
 
 // Infer the type from the schema (matches AkaiGridConfig)

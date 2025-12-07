@@ -198,7 +198,19 @@ export class AkaiGrid {
     async open(path: string) {
         this.checkAllowedPath(path);
         log.debug(`Opening path ${path}`);
-        start(path);
+
+        // If player is set, use it to open the file
+        if (this.config.player && this.config.player.trim() !== "") {
+            log.debug(`Using player ${this.config.player} to open the file.`);
+            const command = new Deno.Command(this.config.player, {
+                args: [path],
+                stdout: "null",
+                stderr: "null",
+            });
+            command.spawn();
+        } else {
+            start(path);
+        }
 
         // Also update the date accessed for the parent directory
         if (this.config.bringFolderToTop) {
