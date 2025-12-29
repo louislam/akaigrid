@@ -6,6 +6,7 @@ import * as path from "@std/path";
 import { serveDir, serveFile } from "@std/http/file-server";
 import { DirConfigSchema, EntryDisplayObject, ObjectAsArray } from "../common/util.ts";
 import { getAllMPCHCMediaHistory } from "./history.ts";
+import {kv} from "./db/kv.ts";
 
 export class Server {
     akaiGrid: AkaiGrid;
@@ -228,6 +229,49 @@ export class Server {
                 return res;
             } catch (error) {
                 return serveFile(req, placeholderImagePath);
+            }
+        });
+
+        // Maintenance
+        // Clear thumbnails that do not have corresponding files
+        this.router.add("GET", "/api/maintenance", async (req, params) => {
+            try {
+                // Get file list from thumbnail directory
+                const dir = this.akaiGrid.thumbnailDir;
+                const files = await Deno.readDir(dir);
+                let deletedCount = 0;
+
+                for await (const file of files) {
+                    if (file.isFile && file.name.endsWith(".jpg")) {
+                        const thumbnailPath = path.join(dir, file.name);
+
+
+                        // Check if there is a corresponding file in the kv store
+                        const originalPath = await kv().get<string>(["thumbnail", thumbnailPath]);
+                        if (originalPath.value) {
+                            // Check if the original file exists
+                            if (await fs.exists(originalPath.value)) {
+                                continue; // File exists, do not delete
+                            }
+                        }
+
+                        // Delete the thumbnail file
+                        console.log("Cleap Up Thumbnail: ", thumbnailPath);
+                        await Deno.remove(thumbnailPath);
+                        deletedCount++;
+                    }
+                }
+
+                console.log("Cleanup completed, deleted thumbnails:", deletedCount);
+
+                const res = Response.json({
+                    status: true,
+                    deletedCount,
+                });
+                allowDevAllOrigin(res);
+                return res;
+            } catch (error) {
+                return this.errorResponse(error);
             }
         });
     }

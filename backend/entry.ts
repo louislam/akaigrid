@@ -59,11 +59,14 @@ export class Entry {
         const stat = await this.getStat();
 
         if (stat.isFile) {
-            const path = await this.getThumbnailPath();
-            if (!await fs.exists(path)) {
-                await generateThumbnail(this.absolutePath, path);
+            const thumbnailPath = await this.getThumbnailPath();
+            if (!await fs.exists(thumbnailPath)) {
+                await generateThumbnail(this.absolutePath, thumbnailPath);
+
+                // Store the thumbnail path to kv store for quick access later
+                await kv().set(["thumbnail", thumbnailPath], this.absolutePath);
             }
-            return path;
+            return thumbnailPath;
         } else if (stat.isDirectory) {
             // cover.jpg or cover.png
             let coverPath = path.join(this.absolutePath, "cover.jpg");
@@ -71,6 +74,10 @@ export class Entry {
                 return coverPath;
             }
             coverPath = path.join(this.absolutePath, "cover.png");
+            if (await fs.exists(coverPath)) {
+                return coverPath;
+            }
+            coverPath = path.join(this.absolutePath, "cover.webp");
             if (await fs.exists(coverPath)) {
                 return coverPath;
             }
