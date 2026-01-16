@@ -219,16 +219,14 @@ export class Server {
 
                 const entry = await this.akaiGrid.getEntry(path);
                 const thumbnailPath = await entry.generateThumbnail();
-                const res = serveFile(req, thumbnailPath);
+                const res = await serveFile(req, thumbnailPath);
 
-                res.then((res) => {
-                    const s = 86400 * 30; // cache 30 days
-                    res.headers.set("Cache-Control", `public, max-age=${s}`);
-                });
+                const s = 86400 * 30; // cache 30 days
+                res.headers.set("Cache-Control", `public, max-age=${s}`);
 
                 return res;
             } catch (error) {
-                return serveFile(req, placeholderImagePath);
+                return await serveFile(req, placeholderImagePath);
             }
         });
 
