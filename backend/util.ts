@@ -196,8 +196,11 @@ export async function getVideoInfo(videoPath: string): Promise<VideoInfo> {
             "json",
             videoPath,
         ],
+        stdout: "piped",
+        stderr: "piped",
     });
-    const output = await command.output();
+    const child = command.spawn();
+    const output = await child.output();
     if (output.code !== 0) {
         const errorMsg = new TextDecoder().decode(output.stderr);
         throw new Error(`Error executing ffprobe: ${errorMsg}, ${output.code}`);
@@ -230,8 +233,11 @@ export async function generateThumbnail(videoPath: string, thumbnailPath: string
             "default=noprint_wrappers=1:nokey=1",
             videoPath,
         ],
+        stdout: "piped",
+        stderr: "piped",
     });
-    let output = await command.output();
+    let child = command.spawn();
+    let output = await child.output();
 
     if (output.code !== 0) {
         const errorMsg = new TextDecoder().decode(output.stderr);
@@ -265,8 +271,10 @@ export async function generateThumbnail(videoPath: string, thumbnailPath: string
             thumbnailPath,
         ],
         stdout: "piped",
+        stderr: "piped",
     });
-    output = await command.output();
+    child = command.spawn();
+    output = await child.output();
 
     if (output.code !== 0) {
         log.error("Error executing ffmpeg:", output.stderr);
