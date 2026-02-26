@@ -3,17 +3,13 @@ import { ObjectAsArray } from "../common/util.ts";
 
 export async function getAllMPCHCMediaHistory(): Promise<ObjectAsArray<number>> {
     const key = "HKEY_CURRENT_USER\\Software\\MPC-HC\\MPC-HC\\MediaHistory";
-    const command = new Deno.Command("reg.exe", {
-        args: [
-            "query",
-            key,
-            "/s",
-            "/v",
-            "FilePosition",
-        ],
-    });
-
-    let { code, stdout, stderr } = await command.output();
+    const { code, stdout, stderr } = await Deno.spawnAndWait("reg.exe", [
+        "query",
+        key,
+        "/s",
+        "/v",
+        "FilePosition",
+    ]);
 
     if (code !== 0) {
         console.error("Error executing command:", code, stderr);

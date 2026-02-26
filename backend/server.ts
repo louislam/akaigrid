@@ -186,6 +186,28 @@ export class Server {
             }
         });
 
+        // Open Folder file
+        this.router.add("POST", "/api/open-folder/:path", async (_req, params) => {
+            try {
+                const path = params.path;
+                if (!path) {
+                    return this.errorResponse(new Error("No path specified"));
+                }
+                log.info("Open:", path);
+                await this.akaiGrid.openFolder(path);
+                const res = Response.json({
+                    status: true,
+                });
+                allowDevAllOrigin(res);
+                return res;
+            } catch (error) {
+                if (error instanceof Error) {
+                    log.error(error.message);
+                }
+                return this.errorResponse(error);
+            }
+        });
+
         // Set the path to done?
         // :yes = true/false
         this.router.add("POST", "/api/done/:path/:yes", async (_req, params) => {
