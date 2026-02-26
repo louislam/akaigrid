@@ -61,7 +61,7 @@ The same folder in Windows Explorer. AkaiGrid is better, right?
 
 Extra requirements:
 
-- Install Deno 2.3.1 or higher (https://docs.deno.com/runtime/)
+- Install Deno 2.7.1 or higher (https://docs.deno.com/runtime/)
 - Install Git (https://git-scm.com/downloads)
 
 1. Clone this repository and install dependencies:
@@ -69,7 +69,7 @@ Extra requirements:
    ```bash
    git clone https://github.com/louislam/akaigrid
    cd akaigrid
-   git checkout 1.0.2
+   git checkout 1.2.0
    deno task setup
    ```
 

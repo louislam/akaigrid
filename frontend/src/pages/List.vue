@@ -313,7 +313,7 @@ function upper() {
  * Open the current path in the file explorer
  */
 async function openExplorer() {
-    const response = await fetch(baseURL + "/api/open/" + encodeURIComponent(path.value), {
+    const response = await fetch(baseURL + "/api/open-folder/" + encodeURIComponent(path.value), {
         method: "POST",
     });
     if (!response.ok) {

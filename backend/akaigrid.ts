@@ -202,25 +202,30 @@ export class AkaiGrid {
         // If player is set, use it to open the file
         if (this.config.player && this.config.player.trim() !== "") {
             log.debug(`Using player ${this.config.player} to open the file.`);
-            const command = new Deno.Command(this.config.player, {
-                args: [path],
-                stdout: "null",
-                stderr: "null",
-            });
-            command.spawn();
+            Deno.spawn(this.config.player, [path]);
         } else {
             start(path);
         }
 
         // Also update the date accessed for the parent directory
-        if (this.config.bringFolderToTop) {
-            await this.bringFolderToTop(path);
+        try {
+            if (this.config.bringFolderToTop) {
+                await this.bringFolderToTop(path);
+            }
+        } catch (e) {
+            // If it is already the top, it will throw an error, we can ignore it
         }
 
         // Update the date accessed
         if (this.config.updateDateAccessed) {
             await this.updateDateAccessed(path);
         }
+    }
+
+    async openFolder(folder: string) {
+        this.checkAllowedPath(folder);
+        log.debug(`Opening folder ${folder}`);
+        Deno.spawn("explorer.exe", [folder]);
     }
 
     async setDone(path: string, done: boolean) {

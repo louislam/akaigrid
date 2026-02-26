@@ -1,6 +1,5 @@
 import * as log from "@std/log";
 import process from "node:process";
-import childProcess from "node:child_process";
 import { z } from "zod";
 import * as path from "@std/path";
 import { createHash } from "node:crypto";
@@ -107,8 +106,7 @@ export function getFrontendDir(): string {
 }
 
 export function start(path: string) {
-    const escapedPath = escapeString(path);
-    childProcess.exec(`start "" ${escapedPath}`);
+    Deno.spawn("cmd", ["/c", "start", "", path]);
 }
 
 export function isDev() {
@@ -181,23 +179,19 @@ export function getShortHash(bytes: Uint8Array): string {
 }
 
 export async function getVideoInfo(videoPath: string): Promise<VideoInfo> {
-    // ffprobe -v error -select_streams v:0 -show_entries stream=codec_name,width,height,duration -of json input_video.mp4
-    const command = new Deno.Command(ffprobe, {
-        args: [
-            "-v",
-            "error",
-            "-select_streams",
-            "v:0",
-            "-show_entries",
-            "stream=codec_name,width,height",
-            "-show_entries",
-            "format=duration",
-            "-of",
-            "json",
-            videoPath,
-        ],
-    });
-    const output = await command.output();
+    const output = await Deno.spawnAndWait(ffprobe, [
+        "-v",
+        "error",
+        "-select_streams",
+        "v:0",
+        "-show_entries",
+        "stream=codec_name,width,height",
+        "-show_entries",
+        "format=duration",
+        "-of",
+        "json",
+        videoPath,
+    ]);
     if (output.code !== 0) {
         const errorMsg = new TextDecoder().decode(output.stderr);
         throw new Error(`Error executing ffprobe: ${errorMsg}, ${output.code}`);
@@ -220,18 +214,15 @@ export async function getVideoInfo(videoPath: string): Promise<VideoInfo> {
 }
 
 export async function generateThumbnail(videoPath: string, thumbnailPath: string) {
-    let command = new Deno.Command(ffprobe, {
-        args: [
-            "-v",
-            "error",
-            "-show_entries",
-            "format=duration",
-            "-of",
-            "default=noprint_wrappers=1:nokey=1",
-            videoPath,
-        ],
-    });
-    let output = await command.output();
+    let output = await Deno.spawnAndWait(ffprobe, [
+        "-v",
+        "error",
+        "-show_entries",
+        "format=duration",
+        "-of",
+        "default=noprint_wrappers=1:nokey=1",
+        videoPath,
+    ]);
 
     if (output.code !== 0) {
         const errorMsg = new TextDecoder().decode(output.stderr);
@@ -248,25 +239,23 @@ export async function generateThumbnail(videoPath: string, thumbnailPath: string
 
     const targetWidth = 512;
 
-    command = new Deno.Command(ffmpeg, {
-        args: [
-            "-ss",
-            target + "",
-            "-i",
-            videoPath,
-            "-vf",
-            // Generate thumbnail's width is always fixed
-            // SAR = Storage Aspect Ratio, some videos let's say original resolution is 1440x1080, but the video is 16:9, so the SAR is 1.3333
-            // Width: 512px
-            // Height Formula = Height * (512 / Width) * (1 / SAR)
-            `scale=${targetWidth}:ih*(1/sar)*(${targetWidth}/iw)`,
-            "-vframes",
-            "1",
-            thumbnailPath,
-        ],
+    output = await Deno.spawnAndWait(ffmpeg, [
+        "-ss",
+        target + "",
+        "-i",
+        videoPath,
+        "-vf",
+        // Generate thumbnail's width is always fixed
+        // SAR = Storage Aspect Ratio, some videos let's say original resolution is 1440x1080, but the video is 16:9, so the SAR is 1.3333
+        // Width: 512px
+        // Height Formula = Height * (512 / Width) * (1 / SAR)
+        `scale=${targetWidth}:ih*(1/sar)*(${targetWidth}/iw)`,
+        "-vframes",
+        "1",
+        thumbnailPath,
+    ], {
         stdout: "piped",
     });
-    output = await command.output();
 
     if (output.code !== 0) {
         log.error("Error executing ffmpeg:", output.stderr);

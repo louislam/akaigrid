@@ -6,7 +6,7 @@ import * as path from "@std/path";
 import { serveDir, serveFile } from "@std/http/file-server";
 import { DirConfigSchema, EntryDisplayObject, ObjectAsArray } from "../common/util.ts";
 import { getAllMPCHCMediaHistory } from "./history.ts";
-import {kv} from "./db/kv.ts";
+import { kv } from "./db/kv.ts";
 
 export class Server {
     akaiGrid: AkaiGrid;
@@ -186,6 +186,28 @@ export class Server {
             }
         });
 
+        // Open Folder file
+        this.router.add("POST", "/api/open-folder/:path", async (_req, params) => {
+            try {
+                const path = params.path;
+                if (!path) {
+                    return this.errorResponse(new Error("No path specified"));
+                }
+                log.info("Open:", path);
+                await this.akaiGrid.openFolder(path);
+                const res = Response.json({
+                    status: true,
+                });
+                allowDevAllOrigin(res);
+                return res;
+            } catch (error) {
+                if (error instanceof Error) {
+                    log.error(error.message);
+                }
+                return this.errorResponse(error);
+            }
+        });
+
         // Set the path to done?
         // :yes = true/false
         this.router.add("POST", "/api/done/:path/:yes", async (_req, params) => {
@@ -244,7 +266,6 @@ export class Server {
                 for await (const file of files) {
                     if (file.isFile && file.name.endsWith(".jpg")) {
                         const thumbnailPath = path.join(dir, file.name);
-
 
                         // Check if there is a corresponding file in the kv store
                         const originalPath = await kv().get<string>(["thumbnail", thumbnailPath]);
