@@ -6,7 +6,7 @@ import * as path from "@std/path";
 import { serveDir, serveFile } from "@std/http/file-server";
 import { DirConfigSchema, EntryDisplayObject, ObjectAsArray } from "../common/util.ts";
 import { getAllMPCHCMediaHistory } from "./history.ts";
-import {kv} from "./db/kv.ts";
+import { kv } from "./db/kv.ts";
 
 export class Server {
     akaiGrid: AkaiGrid;
@@ -266,7 +266,6 @@ export class Server {
                 for await (const file of files) {
                     if (file.isFile && file.name.endsWith(".jpg")) {
                         const thumbnailPath = path.join(dir, file.name);
-
 
                         // Check if there is a corresponding file in the kv store
                         const originalPath = await kv().get<string>(["thumbnail", thumbnailPath]);

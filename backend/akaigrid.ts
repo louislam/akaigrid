@@ -202,7 +202,7 @@ export class AkaiGrid {
         // If player is set, use it to open the file
         if (this.config.player && this.config.player.trim() !== "") {
             log.debug(`Using player ${this.config.player} to open the file.`);
-            Deno.spawn(this.config.player, [ path ]);
+            Deno.spawn(this.config.player, [path]);
         } else {
             start(path);
         }
@@ -216,7 +216,6 @@ export class AkaiGrid {
             // If it is already the top, it will throw an error, we can ignore it
         }
 
-
         // Update the date accessed
         if (this.config.updateDateAccessed) {
             await this.updateDateAccessed(path);
@@ -226,7 +225,7 @@ export class AkaiGrid {
     async openFolder(folder: string) {
         this.checkAllowedPath(folder);
         log.debug(`Opening folder ${folder}`);
-        Deno.spawn("explorer.exe", [ folder ]); 
+        Deno.spawn("explorer.exe", [folder]);
     }
 
     async setDone(path: string, done: boolean) {
