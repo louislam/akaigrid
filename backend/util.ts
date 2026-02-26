@@ -1,6 +1,5 @@
 import * as log from "@std/log";
 import process from "node:process";
-import childProcess from "node:child_process";
 import { z } from "zod";
 import * as path from "@std/path";
 import { createHash } from "node:crypto";
@@ -108,7 +107,7 @@ export function getFrontendDir(): string {
 
 export function start(path: string) {
     const escapedPath = escapeString(path);
-    childProcess.exec(`start "" ${escapedPath}`);
+    Deno.spawn("cmd", ["/c", "start", "", escapedPath], { stdout: "null", stderr: "null" });
 }
 
 export function isDev() {
