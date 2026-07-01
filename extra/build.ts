@@ -126,7 +126,9 @@ export function buildBackend() {
     // Rename package.json in order to exclude devDependencies
     try {
         Deno.renameSync("package.json", "package.json.building");
-    } catch {}
+    } catch {
+        // Ignore
+    }
 
     // Because we have excluded devDependencies, @types/express is not existing anymore.
     // TypeScript will complain here, --no-check skips the check.
@@ -157,7 +159,9 @@ export function buildBackend() {
 
     try {
         Deno.renameSync("package.json.building", "package.json");
-    } catch {}
+    } catch {
+        // Ignore
+    }
 }
 
 /**
