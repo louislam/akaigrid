@@ -5,13 +5,16 @@ let id: string = "44718";
 export const ANILIST_API = "https://graphql.anilist.co";
 export const ANILIST_AUTH_URL = "https://anilist.co/api/v2/oauth/authorize";
 
-let customID = Deno.env.get("ANILIST_ID");
-if (customID) {
-    log.info(`Using custom AniList ID: ${customID}`);
-    id = customID;
-} else if (isDev()) {
+if (isDev()) {
     // use dev id for dev mode
     id = "44744";
+}
+
+export function init(customId?: string) {
+    if (customId) {
+        log.info(`Using custom AniList ID: ${customId}`);
+        id = customId;
+    }
 }
 
 export async function getMediaID(name: string): Promise<number | null> {

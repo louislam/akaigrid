@@ -42,3 +42,10 @@ folders:
 # So that the video file will be in the top of the list, it will be more convenient to find the video if the folder is sorted by "Date Accessed / Desc".
 # (true or false) (default: false)
 updateDateAccessed: false
+
+##### Since 1.3.0
+
+# AniList App Client ID
+# Get yours at https://anilist.co/settings/developer
+# (string) (optional)
+# aniListID: 44718

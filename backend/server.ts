@@ -42,6 +42,7 @@ export class Server {
         const akaiGrid = await AkaiGrid.createInstance(appDataDir);
         const hostname = akaiGrid.config.host;
         const port = akaiGrid.config.port;
+        aniList.init(akaiGrid.config.aniListID);
         return new Server(akaiGrid, hostname, port, frontendDir);
     }
 
