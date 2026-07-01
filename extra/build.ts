@@ -4,8 +4,6 @@ import { log } from "../backend/util.ts";
 import { MultiProgressBar } from "jsr:@deno-library/progress@~1.5.1";
 import { Downloader } from "./downloader.ts";
 import { appVersion } from "../backend/util.ts";
-
-//import { Downloader } from "jsr:@rabbit-company/downloader@0.1.2";
 import * as path from "@std/path";
 const backendEntry = "./backend/main.ts";
 
@@ -115,10 +113,8 @@ export function buildFrontend(isBuiltByProductionUser: boolean) {
         stdio: "inherit",
     });
 
-    if (isBuiltByProductionUser) {
-        Deno.removeSync("./package.json");
-        Deno.removeSync("node_modules", { recursive: true });
-    }
+    Deno.removeSync("./package.json");
+    Deno.removeSync("node_modules", { recursive: true });
 }
 
 /**
@@ -128,7 +124,9 @@ export function buildBackend() {
     // Deno cannot exclude devDependencies.................. which heavily increases the size of the build.
     // I tried to be creative here.
     // Rename package.json in order to exclude devDependencies
-    Deno.renameSync("package.json", "package.json.building");
+    try {
+        Deno.renameSync("package.json", "package.json.building");
+    } catch {}
 
     // Because we have excluded devDependencies, @types/express is not existing anymore.
     // TypeScript will complain here, --no-check skips the check.
@@ -136,7 +134,6 @@ export function buildBackend() {
     try {
         childProcess.spawnSync("deno", [
             "compile",
-            "--env-file",
             "--include",
             "./frontend-dist",
             "--include",
@@ -158,7 +155,9 @@ export function buildBackend() {
         log.error("Error while building the backend");
     }
 
-    Deno.renameSync("package.json.building", "package.json");
+    try {
+        Deno.renameSync("package.json.building", "package.json");
+    } catch {}
 }
 
 /**
