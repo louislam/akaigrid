@@ -1,13 +1,17 @@
-import { isDev, log } from "./util.ts";
+import {isDev, log} from "./util.ts";
 import { kv } from "./db/kv.ts";
 
-export const ANILIST_ID = 44718;
+let id: string = "44718";
 export const ANILIST_API = "https://graphql.anilist.co";
 export const ANILIST_AUTH_URL = "https://anilist.co/api/v2/oauth/authorize";
-let proxyBaseURL = "https://akaigrid.kuma.pet";
 
-if (isDev()) {
-    proxyBaseURL = "http://localhost:60001";
+let customID = Deno.env.get("ANILIST_ID");
+if (customID) {
+    log.info(`Using custom AniList ID: ${customID}`);
+    id = customID;
+} else if (isDev()) {
+    // use dev id for dev mode
+    id = "44744";
 }
 
 export async function getMediaID(name: string): Promise<number | null> {
@@ -58,23 +62,41 @@ export async function getMediaID(name: string): Promise<number | null> {
 }
 
 export function getAuthURL(callback: string): string {
-    const proxyUrl = new URL(`${proxyBaseURL}/anilist-auth-proxy`);
-    proxyUrl.searchParams.set("callback", callback);
-    return proxyUrl.toString();
-}
-
-export function getActualAuthURL(): string {
     const authURL = new URL(ANILIST_AUTH_URL);
-    authURL.searchParams.set("client_id", String(ANILIST_ID));
-    authURL.searchParams.set("response_type", "code");
+    authURL.searchParams.set("client_id", String(id));
+    authURL.searchParams.set("response_type", "token");
     return authURL.toString();
 }
 
-export async function storeAuthCode(code: string) {
-    await kv().set(["anilist", "code"], code);
+export async function storeToken(token: string) {
+    await kv().set(["anilist", "token"], token);
 }
 
-export async function getAuthCode(): Promise<string | null> {
-    const entry = await kv().get<string>(["anilist", "code"]);
+export async function getToken(): Promise<string | null> {
+    const entry = await kv().get<string>(["anilist", "token"]);
     return entry.value;
+}
+
+export async function isConfigured(): Promise<boolean> {
+    const entry = await kv().get<string>(["anilist", "token"]);
+    return !!entry.value;
+}
+
+export async function getUsername(): Promise<string | null> {
+    const token = await getToken();
+    if (!token) return null;
+
+    const query = `query { Viewer { name } }`;
+    const res = await fetch(ANILIST_API, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
+        },
+        body: JSON.stringify({ query }),
+    });
+
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data?.data?.Viewer?.name ?? null;
 }

@@ -1,7 +1,7 @@
 import * as fs from "@std/fs";
 import { AkaiGrid } from "./akaigrid.ts";
 import { Router } from "@louislam/deno-serve-router";
-import { allowDevAllOrigin, devLogTime, devLogTimeEnd, getFrontendDir, isDemo, isDev, log, placeholderImagePath, renderHTMLResponse, sleep } from "./util.ts";
+import { allowDevAllOrigin, devLogTime, devLogTimeEnd, getFrontendDir, isDemo, isDev, log, placeholderImagePath, sleep } from "./util.ts";
 import * as path from "@std/path";
 import { serveDir, serveFile } from "@std/http/file-server";
 import { DirConfigSchema, EntryDisplayObject, ObjectAsArray } from "../common/util.ts";
@@ -255,27 +255,18 @@ export class Server {
             }
         });
 
-        // AniList auth proxy (only available on the demo instance at akaigrid.kuma.pet)
-        if (isDemo() || isDev()) {
-            this.router.add("GET", "/anilist-auth-proxy", async () => {
-                return renderHTMLResponse("anilist-auth-proxy", {
-                    authURL: aniList.getActualAuthURL(),
-                });
-            });
-
-            this.router.add("GET", "/anilist-auth-proxy/callback", async () => {
-                return renderHTMLResponse("anilist-auth-proxy-callback");
-            });
-        }
-
         // Get settings
         this.router.add("GET", "/api/settings", async (req) => {
             try {
-                const origin = new URL(req.url).origin;
+                const origin = req.headers.get("origin") || "";
                 const callback = origin + "/anilist/callback";
                 const authURL = aniList.getAuthURL(callback);
+                const anilistConfigured = await aniList.isConfigured();
+                const aniListUsername = await aniList.getUsername();
                 const res = Response.json({
                     authURL,
+                    anilistConfigured,
+                    aniListUsername,
                 });
                 allowDevAllOrigin(res);
                 return res;
@@ -284,19 +275,16 @@ export class Server {
             }
         });
 
-        // Set AniList auth code
-        this.router.add("POST", "/api/anilist/auth-code", async (req) => {
+        // Store or clear AniList access token
+        // POST /api/anilist/token?token=xxx to store
+        // POST /api/anilist/token?token= (empty) to clear (disconnect) (from the proxy token exchange)
+        this.router.add("POST", "/api/anilist/token", async (req) => {
             try {
                 const url = new URL(req.url);
-                const authCode = url.searchParams.get("code");
-                if (authCode) {
-                    await aniList.storeAuthCode(authCode);
-                    log.info("AniList auth code stored");
-                    const res = Response.json({ status: true });
-                    allowDevAllOrigin(res);
-                    return res;
-                }
-                const res = Response.json({ status: false, error: "Missing auth code" }, { status: 400 });
+                const token = url.searchParams.get("token") || "";
+                await aniList.storeToken(token);
+                log.info(token ? "AniList token stored" : "AniList token cleared");
+                const res = Response.json({ status: true });
                 allowDevAllOrigin(res);
                 return res;
             } catch (error) {

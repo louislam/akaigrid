@@ -1,38 +1,51 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
-import { baseURL } from "../util.ts";
-import { notify } from "@kyvg/vue3-notification";
+import { baseURL, notifyError, notifySuccess } from "../util.ts";
 
-const authURL = ref("");
+const settings = ref<{ authURL: string; anilistConfigured: boolean; aniListUsername?: string } | null>(null);
 
-onMounted(async () => {
+async function disconnectAniList() {
+    try {
+        const response = await fetch(baseURL + "/api/anilist/token?token=", { method: "POST" });
+        if (response.ok) {
+            await fetchSettings();
+            notifySuccess("AniList disconnected");
+        } else {
+            const data = await response.json();
+            notifyError(data.error || "Failed to disconnect");
+        }
+    } catch (err) {
+        notifyError(err);
+    }
+}
+
+async function fetchSettings() {
     try {
         const response = await fetch(baseURL + "/api/settings");
         if (response.ok) {
-            const data = await response.json();
-            authURL.value = data.authURL || "";
+            settings.value = await response.json();
         } else {
             const data = await response.json();
-            notify({
-                title: data.error || "Failed to load settings",
-                type: "error",
-            });
+            notifyError(data.error || "Failed to load settings");
         }
     } catch (err) {
-        notify({
-            title: "Network error: " + (err instanceof Error ? err.message : "Unknown error"),
-            type: "error",
-        });
+        notifyError(err);
     }
-});
+}
+
+onMounted(fetchSettings);
 </script>
 
 <template>
     <div>
         <p>Connect your AniList account to track your anime progress.</p>
-        <a v-if="authURL" :href="authURL" class="btn btn-primary">
+        <p v-if="settings?.aniListUsername">Logged in as: <strong>{{ settings.aniListUsername }}</strong></p>
+        <a v-if="settings?.authURL && !settings?.anilistConfigured" :href="settings.authURL" class="btn btn-primary">
             <font-awesome-icon :icon='["fas", "arrow-up-right-from-square"]' class="me-1" />
-            Login with AniList
+            Connect AniList
         </a>
+        <button v-else-if="settings?.anilistConfigured" class="btn btn-danger" @click="disconnectAniList">
+            Disconnect AniList
+        </button>
     </div>
 </template>

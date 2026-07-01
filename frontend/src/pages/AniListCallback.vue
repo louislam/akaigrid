@@ -1,30 +1,28 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
-import { useRoute } from "vue-router";
 import { baseURL } from "../util.ts";
 
-const route = useRoute();
 const status = ref<"loading" | "success" | "error">("loading");
 const message = ref("");
 
 onMounted(async () => {
-    const code = route.query.code as string | undefined;
-    if (!code) {
+    const params = new URLSearchParams(window.location.hash.slice(1));
+    const token = params.get("access_token");
+    if (!token) {
         status.value = "error";
-        message.value = "No authorization code found in URL.";
+        message.value = "No access token found in URL.";
         return;
     }
 
     try {
-        const url = baseURL + "/api/anilist/auth-code?code=" + encodeURIComponent(code);
-        const response = await fetch(url, { method: "POST" });
+        const response = await fetch(baseURL + "/api/anilist/token?token=" + encodeURIComponent(token), { method: "POST" });
         if (response.ok) {
             status.value = "success";
-            message.value = "Authorization successful! You can close this tab.";
+            message.value = "Authorization successful!";
         } else {
             const data = await response.json();
             status.value = "error";
-            message.value = data.error || "Failed to exchange authorization code.";
+            message.value = data.error || "Failed to store access token.";
         }
     } catch (err) {
         status.value = "error";
@@ -45,6 +43,9 @@ onMounted(async () => {
                 </div>
                 <div v-else class="fs-4 text-danger">
                     {{ message }}
+                </div>
+                <div v-if="status !== 'loading'" class="mt-3">
+                    <router-link to="/settings">Back to Settings</router-link>
                 </div>
             </div>
         </div>

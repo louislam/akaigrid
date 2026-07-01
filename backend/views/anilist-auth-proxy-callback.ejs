@@ -7,13 +7,13 @@
         const callback = localStorage.getItem("callback");
         localStorage.removeItem("callback");
 
-        const params = new URLSearchParams(location.search);
-        const code = params.get("code");
+        const params = new URLSearchParams(location.hash.replace("#", ""));
+        const accessToken = params.get("access_token");
 
-        // if callback exists, redirect to it with the code and current hashtag
+        // if callback exists, redirect to it with the token and current hashtag
         if (callback) {
             const redirectUrl = new URL(callback);
-            redirectUrl.searchParams.set("code", code);
+            redirectUrl.searchParams.set("token", accessToken);
             location.href = redirectUrl.toString();
         } else {
             document.body.innerText = "No callback URL found";
