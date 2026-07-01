@@ -1,4 +1,4 @@
-import {isDev, log} from "./util.ts";
+import { AnimeInfoSchema, isDev, log, type AnimeInfo } from "./util.ts";
 import { kv } from "./db/kv.ts";
 
 let id: string = "44718";
@@ -99,4 +99,64 @@ export async function getUsername(): Promise<string | null> {
     if (!res.ok) return null;
     const data = await res.json();
     return data?.data?.Viewer?.name ?? null;
+}
+
+export async function getAnimeInfo(mediaId: number): Promise<AnimeInfo | null> {
+    const token = await getToken();
+
+    const query = `
+    query ($mediaId: Int) {
+      Media(id: $mediaId) {
+        title {
+          romaji
+          english
+          native
+        }
+        coverImage {
+          large
+        }
+        episodes
+        mediaListEntry {
+          status
+          progress
+        }
+      }
+    }
+  `;
+
+    const headers: Record<string, string> = {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+    };
+    if (token) {
+        headers["Authorization"] = `Bearer ${token}`;
+    }
+
+    const res = await fetch(ANILIST_API, {
+        method: "POST",
+        headers,
+        body: JSON.stringify({ query, variables: { mediaId } }),
+    });
+
+    if (!res.ok) {
+        log.error(`AniList API error: ${res.status} ${res.statusText}`);
+        return null;
+    }
+
+    const json = await res.json();
+    if (json.errors) {
+        for (const err of json.errors) {
+            log.error(`AniList API error: ${err.message}`);
+        }
+        return null;
+    }
+
+    const parsed = AnimeInfoSchema.safeParse(json.data?.Media);
+
+    if (!parsed.success) {
+        log.error("AniList info parse error: " + parsed.error.message);
+        return null;
+    }
+
+    return parsed.data;
 }

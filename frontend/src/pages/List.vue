@@ -6,6 +6,7 @@ import { useRoute, useRouter } from "vue-router";
 import ItemDir from "../components/ItemDir.vue";
 import ItemFile from "../components/ItemFile.vue";
 import { decodeRequestPath, encodeRequestPath, isEmptyObject, sortObjectAsArray } from "../../../common/util";
+import AniListBar from "../components/AniListBar.vue";
 import { notify } from "@kyvg/vue3-notification";
 
 const route = useRoute();
@@ -467,6 +468,7 @@ async function setDone(item) {
         <div v-if="!loadingFull && !loading && Object.values(list).length == 0" class="text-center my-5">
             No items
         </div>
+        <AniListBar :dirPath="path" :aniListMediaID="dirConfig.aniListMediaID" />
     </div>
 </template>
 

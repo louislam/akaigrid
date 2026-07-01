@@ -292,6 +292,50 @@ export class Server {
             }
         });
 
+        // Get AniList info for a media ID
+        this.router.add("GET", "/api/anilist/info", async (req) => {
+            try {
+                const url = new URL(req.url);
+                const mediaId = url.searchParams.get("mediaId");
+                if (!mediaId) {
+                    return this.errorResponse(new Error("mediaId required"));
+                }
+                const info = await aniList.getAnimeInfo(Number(mediaId));
+                const res = Response.json(info);
+                allowDevAllOrigin(res);
+                return res;
+            } catch (error) {
+                return this.errorResponse(error);
+            }
+        });
+
+        // Link a directory to an AniList media by searching the folder name
+        this.router.add("POST", "/api/anilist/link", async (req) => {
+            try {
+                const url = new URL(req.url);
+                const dir = url.searchParams.get("dir");
+                if (!dir) {
+                    return this.errorResponse(new Error("No directory specified"));
+                }
+
+                const dirName = dir.split(/[\\/]/).pop() || dir;
+                const mediaId = await aniList.getMediaID(dirName);
+                if (!mediaId) {
+                    return this.errorResponse(new Error("No AniList match found"));
+                }
+
+                const dirConfig = await this.akaiGrid.getDirConfig(dir);
+                dirConfig.aniListMediaID = mediaId;
+                await this.akaiGrid.setDirConfig(dir, dirConfig);
+
+                const res = Response.json({ status: true, mediaId });
+                allowDevAllOrigin(res);
+                return res;
+            } catch (error) {
+                return this.errorResponse(error);
+            }
+        });
+
         // Maintenance
         // Clear thumbnails that do not have corresponding files
         this.router.add("GET", "/api/maintenance", async (req, params) => {

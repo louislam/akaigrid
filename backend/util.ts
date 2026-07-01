@@ -56,6 +56,32 @@ export const AkaiGridConfigSchema = z.object({
 // Infer the type from the schema (matches AkaiGridConfig)
 export type AkaiGridConfig = z.infer<typeof AkaiGridConfigSchema>;
 
+// Schema matching the raw AniList GraphQL Media object shape
+const RawAnimeMediaSchema = z.object({
+    title: z.object({
+        romaji: z.string().nullish(),
+        english: z.string().nullish(),
+        native: z.string().nullish(),
+    }).nullish(),
+    coverImage: z.object({
+        large: z.string().nullish(),
+    }).nullish(),
+    episodes: z.number().nullish(),
+    mediaListEntry: z.object({
+        status: z.string().nullish(),
+        progress: z.number().nullish(),
+    }).nullish(),
+});
+
+export const AnimeInfoSchema = RawAnimeMediaSchema.transform(m => ({
+    title: m.title?.romaji ?? m.title?.english ?? m.title?.native ?? "Unknown",
+    thumbnail: m.coverImage?.large ?? "",
+    episodes: m.episodes ?? null,
+    userStatus: m.mediaListEntry?.status ?? null,
+    userProgress: m.mediaListEntry?.progress ?? null,
+}));
+export type AnimeInfo = z.infer<typeof AnimeInfoSchema>;
+
 /**
  * For cmd.exe's start command, escape the string
  * @param str
