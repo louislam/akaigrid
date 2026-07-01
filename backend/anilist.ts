@@ -61,7 +61,7 @@ export async function getMediaID(name: string): Promise<number | null> {
     return media.id as number;
 }
 
-export function getAuthURL(callback: string): string {
+export function getAuthURL(): string {
     const authURL = new URL(ANILIST_AUTH_URL);
     authURL.searchParams.set("client_id", String(id));
     authURL.searchParams.set("response_type", "token");

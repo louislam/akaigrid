@@ -258,9 +258,7 @@ export class Server {
         // Get settings
         this.router.add("GET", "/api/settings", async (req) => {
             try {
-                const origin = req.headers.get("origin") || "";
-                const callback = origin + "/anilist/callback";
-                const authURL = aniList.getAuthURL(callback);
+                const authURL = aniList.getAuthURL();
                 const anilistConfigured = await aniList.isConfigured();
                 const aniListUsername = await aniList.getUsername();
                 const res = Response.json({
