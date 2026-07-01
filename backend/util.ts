@@ -8,7 +8,6 @@ import { VideoInfo } from "../common/util.ts";
 import { fileURLToPath } from "node:url";
 import * as jsonc from "@std/jsonc";
 import * as semver from "@std/semver";
-import ejs from "ejs";
 
 /**
  * After compiled, some files are inside the executable, so the path is different
@@ -401,9 +400,4 @@ export async function isFileLocked(filePath: string): Promise<boolean> {
     }
 }
 
-export async function renderHTMLResponse(viewName: string, data: Record<string, unknown> | undefined = undefined, opts: Record<string, unknown> | undefined = undefined): Promise<Response> {
-    const html = await ejs.renderFile(path.join("./backend/views", viewName + ".ejs"), data, opts);
-    return new Response(html, {
-        headers: { "Content-Type": "text/html" },
-    });
-}
+
