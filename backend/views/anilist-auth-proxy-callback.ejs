@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>AkaiGrid - Anilist Auth Finished</title>
+    <script>
+        const callback = localStorage.getItem("callback");
+        localStorage.removeItem("callback");
+
+        const params = new URLSearchParams(location.search);
+        const code = params.get("code");
+
+        // if callback exists, redirect to it with the code and current hashtag
+        if (callback) {
+            const redirectUrl = new URL(callback);
+            redirectUrl.searchParams.set("code", code);
+            location.href = redirectUrl.toString();
+        } else {
+            document.body.innerText = "No callback URL found";
+        }
+
+    </script>
+</head>
+<body></body>
+</html>

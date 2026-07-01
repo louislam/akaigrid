@@ -1,12 +1,13 @@
 import * as fs from "@std/fs";
 import { AkaiGrid } from "./akaigrid.ts";
 import { Router } from "@louislam/deno-serve-router";
-import { allowDevAllOrigin, devLogTime, devLogTimeEnd, getFrontendDir, isDemo, isDev, log, placeholderImagePath, sleep } from "./util.ts";
+import { allowDevAllOrigin, devLogTime, devLogTimeEnd, getFrontendDir, isDemo, isDev, log, placeholderImagePath, renderHTMLResponse, sleep } from "./util.ts";
 import * as path from "@std/path";
 import { serveDir, serveFile } from "@std/http/file-server";
 import { DirConfigSchema, EntryDisplayObject, ObjectAsArray } from "../common/util.ts";
 import { getAllMPCHCMediaHistory } from "./history.ts";
 import { kv } from "./db/kv.ts";
+import * as aniList from "./anilist.ts";
 
 export class Server {
     akaiGrid: AkaiGrid;
@@ -254,13 +255,62 @@ export class Server {
             }
         });
 
+        // AniList auth proxy (only available on the demo instance at akaigrid.kuma.pet)
+        if (isDemo() || isDev()) {
+            this.router.add("GET", "/anilist-auth-proxy", async () => {
+                return renderHTMLResponse("anilist-auth-proxy", {
+                    authURL: aniList.getActualAuthURL(),
+                });
+            });
+
+            this.router.add("GET", "/anilist-auth-proxy/callback", async () => {
+                return renderHTMLResponse("anilist-auth-proxy-callback");
+            });
+        }
+
+        // Get settings
+        this.router.add("GET", "/api/settings", async (req) => {
+            try {
+                const origin = new URL(req.url).origin;
+                const callback = origin + "/anilist/callback";
+                const authURL = aniList.getAuthURL(callback);
+                const res = Response.json({
+                    authURL,
+                });
+                allowDevAllOrigin(res);
+                return res;
+            } catch (error) {
+                return this.errorResponse(error);
+            }
+        });
+
+        // Set AniList auth code
+        this.router.add("POST", "/api/anilist/auth-code", async (req) => {
+            try {
+                const url = new URL(req.url);
+                const authCode = url.searchParams.get("code");
+                if (authCode) {
+                    await aniList.storeAuthCode(authCode);
+                    log.info("AniList auth code stored");
+                    const res = Response.json({ status: true });
+                    allowDevAllOrigin(res);
+                    return res;
+                }
+                const res = Response.json({ status: false, error: "Missing auth code" }, { status: 400 });
+                allowDevAllOrigin(res);
+                return res;
+            } catch (error) {
+                return this.errorResponse(error);
+            }
+        });
+
         // Maintenance
         // Clear thumbnails that do not have corresponding files
         this.router.add("GET", "/api/maintenance", async (req, params) => {
             try {
                 // Get file list from thumbnail directory
                 const dir = this.akaiGrid.thumbnailDir;
-                const files = await Deno.readDir(dir);
+                const files = Deno.readDir(dir);
                 let deletedCount = 0;
 
                 for await (const file of files) {

@@ -74,7 +74,8 @@
         "@std/semver": "jsr:@std/semver@^1.0.5",
         "@std/yaml": "jsr:@std/yaml@^1.0.5",
         "zod": "npm:zod@~3.24.3",
-        "natural-orderby": "npm:natural-orderby@~5.0.0"
+        "natural-orderby": "npm:natural-orderby@~5.0.0",
+        "ejs": "npm:ejs@~3.1.10"
     },
 
     // Lint
