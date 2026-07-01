@@ -73,7 +73,7 @@ const RawAnimeMediaSchema = z.object({
     }).nullish(),
 });
 
-export const AnimeInfoSchema = RawAnimeMediaSchema.transform(m => ({
+export const AnimeInfoSchema = RawAnimeMediaSchema.transform((m) => ({
     title: m.title?.userPreferred ?? m.title?.romaji ?? m.title?.english ?? m.title?.native ?? "Unknown",
     thumbnail: m.coverImage?.large ?? "",
     episodes: m.episodes ?? null,
@@ -399,5 +399,3 @@ export async function isFileLocked(filePath: string): Promise<boolean> {
         throw err; // Rethrow other unexpected errors
     }
 }
-
-

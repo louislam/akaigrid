@@ -6,6 +6,7 @@ const route = useRoute();
 
 <template>
     <div>
+        <!-- Add :key to disable vue router re-use the same component -->
         <router-view :key="route.fullPath" />
 
         <notifications position="bottom right" />

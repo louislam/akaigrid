@@ -1,4 +1,4 @@
-import { AnimeInfoSchema, isDev, log, type AnimeInfo } from "./util.ts";
+import { type AnimeInfo, AnimeInfoSchema, isDev, log } from "./util.ts";
 import { kv } from "./db/kv.ts";
 
 let id: string = "44718";

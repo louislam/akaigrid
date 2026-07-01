@@ -46,7 +46,7 @@ onMounted(async () => {
                 <div v-else class="fs-4 text-danger">
                     {{ message }}
                 </div>
-                <div v-if="status !== 'loading'" class="mt-3">
+                <div v-if='status !== "loading"' class="mt-3">
                     <router-link to="/settings">Back to Settings</router-link>
                 </div>
             </div>

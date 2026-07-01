@@ -10,7 +10,7 @@ async function fetchSettings() {
         if (res.ok) {
             settings.value = await res.json();
         }
-    } catch {  }
+    } catch {}
 }
 
 onMounted(fetchSettings);

@@ -23,13 +23,15 @@ const dirName = computed(() => props.dirPath.split(/[\\/]/).pop() || props.dirPa
 const searchURL = computed(() => "https://anilist.co/search/anime?search=" + encodeURIComponent(dirName.value));
 
 // Fetched anime data from backend
-const animeInfo = ref<{
-    title: string;
-    thumbnail: string;
-    episodes: number | null;
-    userStatus: string | null;
-    userProgress: number | null;
-} | null>(null);
+const animeInfo = ref<
+    {
+        title: string;
+        thumbnail: string;
+        episodes: number | null;
+        userStatus: string | null;
+        userProgress: number | null;
+    } | null
+>(null);
 
 // AniList media list status enum with display labels
 const STATUSES: Record<string, string> = {
@@ -167,35 +169,33 @@ async function updateStatus(status: string) {
 </script>
 
 <template>
-    <div class="bar" v-if="dirPath !== 'Home'">
-        
+    <div class="bar" v-if='dirPath !== "Home"'>
         <!-- Linked -->
         <div v-if="animeInfo" class="info">
             <img v-if="animeInfo.thumbnail" :src="animeInfo.thumbnail" class="thumb" alt />
             <div class="details">
                 <div class="title">{{ animeInfo.title }}</div>
-                <a :href="'https://anilist.co/anime/' + currentMediaId" target="_blank">Open AniList Page</a>
+                <a :href='"https://anilist.co/anime/" + currentMediaId' target="_blank">Open AniList Page</a>
                 <div class="status-row">
-                    
                     <!-- Status -->
                     <select v-model="selectedStatus" class="status-select" :disabled="statusLoading">
                         <option value="" disabled>Set status</option>
                         <option v-for="(label, key) in STATUSES" :key="key" :value="key">{{ label }}</option>
                     </select>
-                    
+
                     <!-- Episodes Select -->
                     <select v-if="animeInfo.episodes != null" v-model="selectedProgress" class="progress-select" :disabled="statusLoading">
                         <option v-for="n in animeInfo.episodes + 1" :key="n - 1" :value="n - 1">{{ n - 1 }}</option>
                     </select>
-                    
+
                     <!-- Episode input when no max -->
                     <input v-else v-model.lazy.number="selectedProgress" type="number" class="progress-input" :disabled="statusLoading" min="0" />
-                    <span class="progress-total">/ {{ animeInfo.episodes ?? '?' }}</span>
+                    <span class="progress-total">/ {{ animeInfo.episodes ?? "?" }}</span>
                 </div>
             </div>
-            <button class="btn btn-sm ms-2" style="background: none; border: none; color: #888; font-size: 0.8rem;" @click="unlinkAniList" title="Unlink">Unlink</button>
+            <button class="btn btn-sm ms-2" style="background: none; border: none; color: #888; font-size: 0.8rem" @click="unlinkAniList" title="Unlink">Unlink</button>
         </div>
-        
+
         <!-- Not Linked -->
         <div v-else-if="!loading && !infoLoading" class="info not-linked">
             <div class="details">
@@ -204,7 +204,10 @@ async function updateStatus(status: string) {
                     <button class="btn btn-primary btn-sm" @click="linkAniList">Link AniList</button>
                 </div>
                 <div class="search-row">
-                    <span class="tip" title="Link AniList will automatically search the folder name. If the match is wrong, you can manually enter the AniList ID. Use Search on AniList to find the correct ID.">?</span>
+                    <span
+                        class="tip"
+                        title="Link AniList will automatically search the folder name. If the match is wrong, you can manually enter the AniList ID. Use Search on AniList to find the correct ID."
+                    >?</span>
                     <a :href="searchURL" target="_blank">Search on AniList</a>
                 </div>
             </div>
@@ -231,7 +234,7 @@ async function updateStatus(status: string) {
     padding: 16px 32px;
     border-radius: $border-radius;
     border: 1px solid rgba(255, 255, 255, 0.1);
-    
+
     &.not-linked {
         padding-bottom: 10px;
     }
