@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import { inject, onMounted, ref } from "vue";
 import { baseURL } from "../util.ts";
 
+const fetchSettings = inject<() => Promise<void>>("fetchSettings");
 const status = ref<"loading" | "success" | "error">("loading");
 const message = ref("");
 
@@ -17,6 +18,7 @@ onMounted(async () => {
     try {
         const response = await fetch(baseURL + "/api/anilist/token?token=" + encodeURIComponent(token), { method: "POST" });
         if (response.ok) {
+            await fetchSettings();
             status.value = "success";
             message.value = "Authorization successful!";
         } else {

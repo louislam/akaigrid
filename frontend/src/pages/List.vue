@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
+import { computed, inject, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { BAlert, BButton, BButtonGroup, BFormInput, BNavbar, BNavForm, BSpinner } from "bootstrap-vue-next";
 import { baseURL } from "../util";
 import { useRoute, useRouter } from "vue-router";
@@ -25,6 +25,7 @@ const pageType = ref((route.fullPath === "/") ? "home" : "list");
 const dirConfig = ref({});
 const errorMessage = ref("");
 const searchKeyword = ref("");
+const settings = inject("settings");
 
 // computed isList
 const isList = computed(() => {
@@ -468,7 +469,7 @@ async function setDone(item) {
         <div v-if="!loadingFull && !loading && Object.values(list).length == 0" class="text-center my-5">
             No items
         </div>
-        <AniListBar :dirPath="path" :aniListMediaID="dirConfig.aniListMediaID" />
+        <AniListBar v-if="settings?.anilistConfigured" :dirPath="path" :aniListMediaID="dirConfig.aniListMediaID" />
     </div>
 </template>
 
