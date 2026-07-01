@@ -15,6 +15,9 @@ const manualId = ref("");
 const selectedStatus = ref("");
 const selectedProgress = ref(0);
 
+// Local media ID — set immediately on link, otherwise syncs from prop
+const currentMediaId = ref(props.aniListMediaID);
+
 // Derive folder name for autosearch
 const dirName = computed(() => props.dirPath.split(/[\\/]/).pop() || props.dirPath);
 const searchURL = computed(() => "https://anilist.co/search/anime?search=" + encodeURIComponent(dirName.value));
@@ -40,6 +43,7 @@ const STATUSES: Record<string, string> = {
 
 // Fetch anime info when media ID changes
 watch(() => props.aniListMediaID, async (id) => {
+    currentMediaId.value = id;
     if (id) {
         await fetchAnimeInfo(id);
     } else {
@@ -53,13 +57,13 @@ watch(animeInfo, (info) => {
 }, { immediate: true });
 
 watch(selectedStatus, async (status) => {
-    if (!props.aniListMediaID || !status) return;
+    if (!currentMediaId.value || !status) return;
     if (animeInfo.value && status === animeInfo.value.userStatus) return;
     await updateStatus(status);
 });
 
 watch(selectedProgress, async (progress) => {
-    if (!props.aniListMediaID || Number.isNaN(progress)) return;
+    if (!currentMediaId.value || Number.isNaN(progress)) return;
     if (animeInfo.value && progress === animeInfo.value.userProgress) return;
     await updateProgress(progress);
 });
@@ -109,6 +113,7 @@ async function linkAniList() {
         const data = await res.json();
         if (res.ok) {
             manualId.value = "";
+            currentMediaId.value = data.mediaId;
             notifySuccess("Linked to AniList ID " + data.mediaId, "anilist");
             await fetchAnimeInfo(data.mediaId);
         } else {
@@ -123,10 +128,10 @@ async function linkAniList() {
 
 /** Send progress update to AniList */
 async function updateProgress(progress: number) {
-    if (!props.aniListMediaID) return;
+    if (!currentMediaId.value) return;
     statusLoading.value = true;
     try {
-        const res = await fetch(baseURL + "/api/anilist/progress?mediaId=" + props.aniListMediaID + "&progress=" + progress, { method: "POST" });
+        const res = await fetch(baseURL + "/api/anilist/progress?mediaId=" + currentMediaId.value + "&progress=" + progress, { method: "POST" });
         if (res.ok) {
             animeInfo.value!.userProgress = progress;
         } else {
@@ -142,10 +147,10 @@ async function updateProgress(progress: number) {
 
 /** Send status update to AniList */
 async function updateStatus(status: string) {
-    if (!props.aniListMediaID) return;
+    if (!currentMediaId.value) return;
     statusLoading.value = true;
     try {
-        const res = await fetch(baseURL + "/api/anilist/status?mediaId=" + props.aniListMediaID + "&status=" + status, { method: "POST" });
+        const res = await fetch(baseURL + "/api/anilist/status?mediaId=" + currentMediaId.value + "&status=" + status, { method: "POST" });
         if (res.ok) {
             animeInfo.value!.userStatus = status;
             notifySuccess("Status updated", "anilist");
@@ -169,7 +174,7 @@ async function updateStatus(status: string) {
             <img v-if="animeInfo.thumbnail" :src="animeInfo.thumbnail" class="thumb" alt />
             <div class="details">
                 <div class="title">{{ animeInfo.title }}</div>
-                <a :href="'https://anilist.co/anime/' + props.aniListMediaID" target="_blank">Open AniList Page</a>
+                <a :href="'https://anilist.co/anime/' + currentMediaId" target="_blank">Open AniList Page</a>
                 <div class="status-row">
                     
                     <!-- Status -->
