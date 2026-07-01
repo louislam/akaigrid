@@ -61,6 +61,29 @@ body {}
     }
 }
 
+.akaigrid-navbar {
+    height: 59px;
+    margin: 10px 0;
+    position: sticky;
+    top: 0;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    column-gap: 10px;
+    backdrop-filter: blur(10px);
+
+    .toolbar {
+        flex-grow: 4;
+        display: flex;
+        column-gap: 10px;
+
+        button {
+            text-wrap: nowrap;
+        }
+    }
+}
+
 .item {
     text-decoration: none;
     transition: background-color 0.3s ease;

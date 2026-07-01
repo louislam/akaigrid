@@ -7,6 +7,7 @@ import { serveDir, serveFile } from "@std/http/file-server";
 import { DirConfigSchema, EntryDisplayObject, ObjectAsArray } from "../common/util.ts";
 import { getAllMPCHCMediaHistory } from "./history.ts";
 import { kv } from "./db/kv.ts";
+import * as aniList from "./anilist.ts";
 
 export class Server {
     akaiGrid: AkaiGrid;
@@ -254,13 +255,157 @@ export class Server {
             }
         });
 
+        // Get settings
+        this.router.add("GET", "/api/settings", async (req) => {
+            try {
+                const authURL = aniList.getAuthURL();
+                const anilistConfigured = await aniList.isConfigured();
+                const aniListUsername = await aniList.getUsername();
+                const res = Response.json({
+                    authURL,
+                    anilistConfigured,
+                    aniListUsername,
+                });
+                allowDevAllOrigin(res);
+                return res;
+            } catch (error) {
+                return this.errorResponse(error);
+            }
+        });
+
+        // Store or clear AniList access token
+        // POST /api/anilist/token?token=xxx to store
+        // POST /api/anilist/token?token= (empty) to clear (disconnect) (from the proxy token exchange)
+        this.router.add("POST", "/api/anilist/token", async (req) => {
+            try {
+                const url = new URL(req.url);
+                const token = url.searchParams.get("token") || "";
+                await aniList.storeToken(token);
+                log.info(token ? "AniList token stored" : "AniList token cleared");
+                const res = Response.json({ status: true });
+                allowDevAllOrigin(res);
+                return res;
+            } catch (error) {
+                return this.errorResponse(error);
+            }
+        });
+
+        // Get AniList info for a media ID
+        this.router.add("GET", "/api/anilist/info", async (req) => {
+            try {
+                const url = new URL(req.url);
+                const mediaId = url.searchParams.get("mediaId");
+                if (!mediaId) {
+                    return this.errorResponse(new Error("mediaId required"));
+                }
+                const info = await aniList.getAnimeInfo(Number(mediaId));
+                const res = Response.json(info);
+                allowDevAllOrigin(res);
+                return res;
+            } catch (error) {
+                return this.errorResponse(error);
+            }
+        });
+
+        // Link a directory to an AniList media by searching the folder name
+        this.router.add("POST", "/api/anilist/link", async (req) => {
+            try {
+                const url = new URL(req.url);
+                const dir = url.searchParams.get("dir");
+                if (!dir) {
+                    return this.errorResponse(new Error("No directory specified"));
+                }
+
+                const urlMediaId = url.searchParams.get("mediaId");
+                let mediaId: number | null;
+
+                if (urlMediaId) {
+                    mediaId = Number(urlMediaId);
+                } else {
+                    const dirName = dir.split(/[\\/]/).pop() || dir;
+                    mediaId = await aniList.getMediaID(dirName);
+                }
+
+                if (!mediaId) {
+                    return this.errorResponse(new Error("No AniList match found"));
+                }
+
+                const dirConfig = await this.akaiGrid.getDirConfig(dir);
+                dirConfig.aniListMediaID = mediaId;
+                await this.akaiGrid.setDirConfig(dir, dirConfig);
+
+                const res = Response.json({ status: true, mediaId });
+                allowDevAllOrigin(res);
+                return res;
+            } catch (error) {
+                return this.errorResponse(error);
+            }
+        });
+
+        // Unlink a directory from AniList
+        this.router.add("POST", "/api/anilist/unlink", async (req) => {
+            try {
+                const url = new URL(req.url);
+                const dir = url.searchParams.get("dir");
+                if (!dir) {
+                    return this.errorResponse(new Error("No directory specified"));
+                }
+
+                const dirConfig = await this.akaiGrid.getDirConfig(dir);
+                delete dirConfig.aniListMediaID;
+                await this.akaiGrid.setDirConfig(dir, dirConfig);
+
+                const res = Response.json({ status: true });
+                allowDevAllOrigin(res);
+                return res;
+            } catch (error) {
+                return this.errorResponse(error);
+            }
+        });
+
+        // Update AniList media list status
+        this.router.add("POST", "/api/anilist/status", async (req) => {
+            try {
+                const url = new URL(req.url);
+                const mediaId = url.searchParams.get("mediaId");
+                const status = url.searchParams.get("status");
+                if (!mediaId || !status) {
+                    return this.errorResponse(new Error("mediaId and status required"));
+                }
+                const ok = await aniList.updateStatus(Number(mediaId), status);
+                const res = Response.json({ status: ok });
+                allowDevAllOrigin(res);
+                return res;
+            } catch (error) {
+                return this.errorResponse(error);
+            }
+        });
+
+        // Update AniList media list progress
+        this.router.add("POST", "/api/anilist/progress", async (req) => {
+            try {
+                const url = new URL(req.url);
+                const mediaId = url.searchParams.get("mediaId");
+                const progress = url.searchParams.get("progress");
+                if (!mediaId || progress === null) {
+                    return this.errorResponse(new Error("mediaId and progress required"));
+                }
+                const ok = await aniList.updateProgress(Number(mediaId), Number(progress));
+                const res = Response.json({ status: ok });
+                allowDevAllOrigin(res);
+                return res;
+            } catch (error) {
+                return this.errorResponse(error);
+            }
+        });
+
         // Maintenance
         // Clear thumbnails that do not have corresponding files
         this.router.add("GET", "/api/maintenance", async (req, params) => {
             try {
                 // Get file list from thumbnail directory
                 const dir = this.akaiGrid.thumbnailDir;
-                const files = await Deno.readDir(dir);
+                const files = Deno.readDir(dir);
                 let deletedCount = 0;
 
                 for await (const file of files) {

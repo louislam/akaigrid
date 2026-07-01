@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
+import { computed, inject, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { BAlert, BButton, BButtonGroup, BFormInput, BNavbar, BNavForm, BSpinner } from "bootstrap-vue-next";
 import { baseURL } from "../util";
 import { useRoute, useRouter } from "vue-router";
 import ItemDir from "../components/ItemDir.vue";
 import ItemFile from "../components/ItemFile.vue";
 import { decodeRequestPath, encodeRequestPath, isEmptyObject, sortObjectAsArray } from "../../../common/util";
+import AniListBar from "../components/AniListBar.vue";
 import { notify } from "@kyvg/vue3-notification";
 
 const route = useRoute();
@@ -24,6 +25,7 @@ const pageType = ref((route.fullPath === "/") ? "home" : "list");
 const dirConfig = ref({});
 const errorMessage = ref("");
 const searchKeyword = ref("");
+const settings = inject("settings");
 
 // computed isList
 const isList = computed(() => {
@@ -428,6 +430,12 @@ async function setDone(item) {
                     <font-awesome-icon :icon='["fas", "folder-open"]' class="me-1" /> Open in Explorer
                 </BButton>
 
+                <router-link to="/settings">
+                    <BButton pill title="Settings">
+                        <font-awesome-icon :icon='["fas", "gear"]' />
+                    </BButton>
+                </router-link>
+
                 <BButton pill @click="toggleFullscreen" title="Toggle Fullscreen">
                     <font-awesome-icon :icon='["fas", "expand"]' />
                 </BButton>
@@ -461,34 +469,12 @@ async function setDone(item) {
         <div v-if="!loadingFull && !loading && Object.values(list).length == 0" class="text-center my-5">
             No items
         </div>
+        <AniListBar v-if="settings?.anilistConfigured" :dirPath="path" :aniListMediaID="dirConfig.aniListMediaID" />
     </div>
 </template>
 
 <style lang="scss" scoped>
 @import "../styles/vars.scss";
-
-.akaigrid-navbar {
-    height: 59px;
-    margin: 10px 0;
-    position: sticky;
-    top: 0;
-    z-index: 10000;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    column-gap: 10px;
-    backdrop-filter: blur(10px);
-
-    .toolbar {
-        flex-grow: 4;
-        display: flex;
-        column-gap: 10px;
-
-        button {
-            text-wrap: nowrap;
-        }
-    }
-}
 
 .address-bar {
     background-color: $akaigrid-dark;

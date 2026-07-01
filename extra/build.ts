@@ -136,6 +136,7 @@ export function buildBackend() {
     try {
         childProcess.spawnSync("deno", [
             "compile",
+            "--env-file",
             "--include",
             "./frontend-dist",
             "--include",

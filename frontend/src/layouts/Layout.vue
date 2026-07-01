@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { BFormInput, BNavbar, BNavForm } from "bootstrap-vue-next";
 import { useRoute } from "vue-router";
 import { Notifications } from "@kyvg/vue3-notification";
 const route = useRoute();
@@ -11,6 +10,7 @@ const route = useRoute();
         <router-view :key="route.fullPath" />
 
         <notifications position="bottom right" />
+        <notifications group="anilist" position="bottom middle" />
     </div>
 </template>
 

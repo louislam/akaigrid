@@ -31,6 +31,7 @@ export const DirConfigSchema = z.object({
     order: z.enum(["asc", "desc"]).default("asc"),
     view: z.enum(["list", "grid"]).default("list"),
     itemSize: z.enum(["small", "medium", "large"]).default("medium"),
+    aniListMediaID: z.number().optional(),
 });
 export type DirConfig = z.infer<typeof DirConfigSchema>;
 

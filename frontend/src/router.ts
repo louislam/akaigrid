@@ -1,11 +1,48 @@
 import { createRouter, createWebHistory } from "vue-router";
 
 import Layout from "./layouts/Layout.vue";
+import GeneralLayout from "./layouts/GeneralLayout.vue";
 import Dashboard from "./pages/Dashboard.vue";
 import List from "./pages/List.vue";
+import AniListCallback from "./pages/AniListCallback.vue";
+import Settings from "./pages/Settings.vue";
 import { sleep } from "../../common/util.ts";
 
 const routes = [
+    {
+        path: "/anilist/callback",
+        component: Layout,
+        children: [
+            {
+                path: "",
+                component: GeneralLayout,
+                children: [
+                    {
+                        name: "anilist-callback",
+                        path: "",
+                        component: AniListCallback,
+                    },
+                ],
+            },
+        ],
+    },
+    {
+        name: "settings",
+        path: "/settings",
+        component: Layout,
+        children: [
+            {
+                path: "",
+                component: GeneralLayout,
+                children: [
+                    {
+                        path: "",
+                        component: Settings,
+                    },
+                ],
+            },
+        ],
+    },
     {
         path: "/empty",
         component: Layout,
