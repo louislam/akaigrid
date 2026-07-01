@@ -11,4 +11,3 @@ Deno.test("getMediaID live - Test Native Name", async () => {
     const id = await getMediaID("リラックマ");
     assertEquals(id, 183231);
 });
-
