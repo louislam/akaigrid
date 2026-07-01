@@ -16,11 +16,11 @@ function getBaseURL(): string {
 
 export const baseURL = getBaseURL();
 
-export function notifySuccess(title: string) {
-    notify({ title, type: "success" });
+export function notifySuccess(title: string, group?: string) {
+    notify({ title, type: "success", group });
 }
 
-export function notifyError(title: string | Error | unknown) {
+export function notifyError(title: string | Error | unknown, group?: string) {
     const msg = title instanceof Error ? title.message : typeof title === "string" ? title : "Unknown error";
-    notify({ title: msg, type: "error" });
+    notify({ title: msg, type: "error", group });
 }

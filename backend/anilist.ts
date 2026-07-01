@@ -108,6 +108,7 @@ export async function getAnimeInfo(mediaId: number): Promise<AnimeInfo | null> {
     query ($mediaId: Int) {
       Media(id: $mediaId) {
         title {
+          userPreferred
           romaji
           english
           native
@@ -159,4 +160,80 @@ export async function getAnimeInfo(mediaId: number): Promise<AnimeInfo | null> {
     }
 
     return parsed.data;
+}
+
+export async function updateProgress(mediaId: number, progress: number): Promise<boolean> {
+    const token = await getToken();
+    if (!token) return false;
+
+    const query = `
+    mutation ($mediaId: Int, $progress: Int) {
+      SaveMediaListEntry(mediaId: $mediaId, progress: $progress) {
+        id
+        progress
+      }
+    }
+  `;
+
+    const res = await fetch(ANILIST_API, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
+        },
+        body: JSON.stringify({ query, variables: { mediaId, progress } }),
+    });
+
+    if (!res.ok) {
+        log.error(`AniList API error: ${res.status} ${res.statusText}`);
+        return false;
+    }
+
+    const json = await res.json();
+    if (json.errors) {
+        for (const err of json.errors) {
+            log.error(`AniList API error: ${err.message}`);
+        }
+        return false;
+    }
+
+    return !!json.data?.SaveMediaListEntry;
+}
+
+export async function updateStatus(mediaId: number, status: string): Promise<boolean> {
+    const token = await getToken();
+    if (!token) return false;
+
+    const query = `
+    mutation ($mediaId: Int, $status: MediaListStatus) {
+      SaveMediaListEntry(mediaId: $mediaId, status: $status) {
+        id
+        status
+      }
+    }
+  `;
+
+    const res = await fetch(ANILIST_API, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
+        },
+        body: JSON.stringify({ query, variables: { mediaId, status } }),
+    });
+
+    if (!res.ok) {
+        log.error(`AniList API error: ${res.status} ${res.statusText}`);
+        return false;
+    }
+
+    const json = await res.json();
+    if (json.errors) {
+        for (const err of json.errors) {
+            log.error(`AniList API error: ${err.message}`);
+        }
+        return false;
+    }
+
+    return !!json.data?.SaveMediaListEntry;
 }

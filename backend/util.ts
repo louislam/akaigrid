@@ -59,6 +59,7 @@ export type AkaiGridConfig = z.infer<typeof AkaiGridConfigSchema>;
 // Schema matching the raw AniList GraphQL Media object shape
 const RawAnimeMediaSchema = z.object({
     title: z.object({
+        userPreferred: z.string().nullish(),
         romaji: z.string().nullish(),
         english: z.string().nullish(),
         native: z.string().nullish(),
@@ -74,7 +75,7 @@ const RawAnimeMediaSchema = z.object({
 });
 
 export const AnimeInfoSchema = RawAnimeMediaSchema.transform(m => ({
-    title: m.title?.romaji ?? m.title?.english ?? m.title?.native ?? "Unknown",
+    title: m.title?.userPreferred ?? m.title?.romaji ?? m.title?.english ?? m.title?.native ?? "Unknown",
     thumbnail: m.coverImage?.large ?? "",
     episodes: m.episodes ?? null,
     userStatus: m.mediaListEntry?.status ?? null,

@@ -318,8 +318,16 @@ export class Server {
                     return this.errorResponse(new Error("No directory specified"));
                 }
 
-                const dirName = dir.split(/[\\/]/).pop() || dir;
-                const mediaId = await aniList.getMediaID(dirName);
+                const urlMediaId = url.searchParams.get("mediaId");
+                let mediaId: number | null;
+
+                if (urlMediaId) {
+                    mediaId = Number(urlMediaId);
+                } else {
+                    const dirName = dir.split(/[\\/]/).pop() || dir;
+                    mediaId = await aniList.getMediaID(dirName);
+                }
+
                 if (!mediaId) {
                     return this.errorResponse(new Error("No AniList match found"));
                 }
@@ -329,6 +337,63 @@ export class Server {
                 await this.akaiGrid.setDirConfig(dir, dirConfig);
 
                 const res = Response.json({ status: true, mediaId });
+                allowDevAllOrigin(res);
+                return res;
+            } catch (error) {
+                return this.errorResponse(error);
+            }
+        });
+
+        // Unlink a directory from AniList
+        this.router.add("POST", "/api/anilist/unlink", async (req) => {
+            try {
+                const url = new URL(req.url);
+                const dir = url.searchParams.get("dir");
+                if (!dir) {
+                    return this.errorResponse(new Error("No directory specified"));
+                }
+
+                const dirConfig = await this.akaiGrid.getDirConfig(dir);
+                delete dirConfig.aniListMediaID;
+                await this.akaiGrid.setDirConfig(dir, dirConfig);
+
+                const res = Response.json({ status: true });
+                allowDevAllOrigin(res);
+                return res;
+            } catch (error) {
+                return this.errorResponse(error);
+            }
+        });
+
+        // Update AniList media list status
+        this.router.add("POST", "/api/anilist/status", async (req) => {
+            try {
+                const url = new URL(req.url);
+                const mediaId = url.searchParams.get("mediaId");
+                const status = url.searchParams.get("status");
+                if (!mediaId || !status) {
+                    return this.errorResponse(new Error("mediaId and status required"));
+                }
+                const ok = await aniList.updateStatus(Number(mediaId), status);
+                const res = Response.json({ status: ok });
+                allowDevAllOrigin(res);
+                return res;
+            } catch (error) {
+                return this.errorResponse(error);
+            }
+        });
+
+        // Update AniList media list progress
+        this.router.add("POST", "/api/anilist/progress", async (req) => {
+            try {
+                const url = new URL(req.url);
+                const mediaId = url.searchParams.get("mediaId");
+                const progress = url.searchParams.get("progress");
+                if (!mediaId || progress === null) {
+                    return this.errorResponse(new Error("mediaId and progress required"));
+                }
+                const ok = await aniList.updateProgress(Number(mediaId), Number(progress));
+                const res = Response.json({ status: ok });
                 allowDevAllOrigin(res);
                 return res;
             } catch (error) {

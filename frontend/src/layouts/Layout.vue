@@ -11,6 +11,7 @@ const route = useRoute();
         <router-view :key="route.fullPath" />
 
         <notifications position="bottom right" />
+        <notifications group="anilist" position="bottom middle" />
     </div>
 </template>
 
