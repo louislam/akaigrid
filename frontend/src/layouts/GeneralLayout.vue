@@ -13,7 +13,7 @@ import { BButton } from "bootstrap-vue-next";
 
                 <div class="toolbar">
                     <router-link to="/settings">
-                        <BButton pill title="Settings" active>
+                        <BButton pill title="Settings">
                             <font-awesome-icon :icon='["fas", "gear"]' />
                         </BButton>
                     </router-link>
