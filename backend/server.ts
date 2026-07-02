@@ -262,10 +262,13 @@ export class Server {
                 const authURL = aniList.getAuthURL();
                 const anilistConfigured = await aniList.isConfigured();
                 const aniListUsername = await aniList.getUsername();
+                const tokenExpiry = await aniList.getTokenExpiryInfo();
                 const res = Response.json({
                     authURL,
                     anilistConfigured,
                     aniListUsername,
+                    aniListTokenExpiresAt: tokenExpiry.expiresAt,
+                    aniListTokenDaysRemaining: tokenExpiry.daysRemaining,
                 });
                 allowDevAllOrigin(res);
                 return res;
