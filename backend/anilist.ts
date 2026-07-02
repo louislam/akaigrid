@@ -73,6 +73,11 @@ export function getAuthURL(): string {
 
 export async function storeToken(token: string) {
     await kv().set(["anilist", "token"], token);
+    if (token) {
+        await kv().set(["anilist", "tokenCreatedAt"], Date.now());
+    } else {
+        await kv().delete(["anilist", "tokenCreatedAt"]);
+    }
 }
 
 export async function getToken(): Promise<string | null> {
@@ -201,6 +206,29 @@ export async function updateProgress(mediaId: number, progress: number): Promise
     }
 
     return !!json.data?.SaveMediaListEntry;
+}
+
+export async function getTokenExpiryInfo(): Promise<{ expiresAt: number | null; daysRemaining: number | null }> {
+    const token = await getToken();
+    if (!token) return { expiresAt: null, daysRemaining: null };
+
+    const entry = await kv().get<number>(["anilist", "tokenCreatedAt"]);
+    const createdAt = entry.value;
+
+    if (!createdAt) {
+        return { expiresAt: null, daysRemaining: null };
+    }
+
+    let expiresAt = createdAt + 365 * 24 * 60 * 60 * 1000; // 1 year
+
+    // For testing, return today + 1 day as expiresAt and 1 day as daysRemaining
+    if (isDev()) {
+        // expiresAt = Date.now() + 24 * 60 * 60 * 1000; // 1 day
+    }
+
+    const daysRemaining = Math.floor((expiresAt - Date.now()) / (24 * 60 * 60 * 1000));
+
+    return { expiresAt, daysRemaining };
 }
 
 export async function updateStatus(mediaId: number, status: string): Promise<boolean> {
