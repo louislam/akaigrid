@@ -55,7 +55,9 @@ watch(() => props.aniListMediaID, async (id) => {
 
 watch(animeInfo, (info) => {
     selectedStatus.value = info?.userStatus ?? "";
-    selectedProgress.value = info?.userProgress ?? 0;
+    if (info?.userProgress != null) {
+        selectedProgress.value = info?.userProgress;
+    }
 }, { immediate: true });
 
 watch(selectedStatus, async (status) => {
