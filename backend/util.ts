@@ -8,6 +8,7 @@ import { VideoInfo } from "../common/util.ts";
 import { fileURLToPath } from "node:url";
 import * as jsonc from "@std/jsonc";
 import * as semver from "@std/semver";
+import open from "open";
 
 /**
  * After compiled, some files are inside the executable, so the path is different
@@ -133,8 +134,8 @@ export function getFrontendDir(): string {
     return path.join(getSourceDir(), "./frontend-dist");
 }
 
-export function start(path: string) {
-    Deno.spawn("cmd", ["/c", "start", "", path], { stdout: "null", stderr: "null" });
+export function start(target: string) {
+    return open(target);
 }
 
 export function isDev() {
