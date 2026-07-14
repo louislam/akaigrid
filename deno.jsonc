@@ -52,7 +52,10 @@
         "lint": "deno lint",
 
         // Demo Container (Just for demo purpose)
-        "demo": "deno task build:frontend && docker compose -f ./extra/demo/compose.yaml --project-directory ./ up --build"
+        "demo": "deno task build:frontend && docker compose -f ./extra/demo/compose.yaml --project-directory ./ up --build",
+
+        // Update external tools
+        "update:externalTools": "deno run --allow-all ./extra/update-external-tools.ts"
     },
 
     // Run `deno fmt` to format your code
@@ -78,6 +81,11 @@
         "natural-orderby": "npm:natural-orderby@~5.0.0",
         "open": "npm:open@~11.0.0",
         "zod": "npm:zod@~3.24.3"
+    },
+
+    "externalTools": {
+        "ffmpeg": "8.1.2",
+        "7zip": "26.02"
     },
 
     // Lint

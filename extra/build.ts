@@ -5,7 +5,17 @@ import { MultiProgressBar } from "jsr:@deno-library/progress@~1.5.1";
 import { Downloader } from "./downloader.ts";
 import { appVersion } from "../backend/util.ts";
 import * as path from "@std/path";
+import * as jsonc from "@std/jsonc";
 const backendEntry = "./backend/main.ts";
+
+function getExternalToolVersion(tool: string): string {
+    const content = Deno.readTextFileSync("./deno.jsonc");
+    const parsed = jsonc.parse(content) as { externalTools?: Record<string, string> };
+    if (!parsed.externalTools || !parsed.externalTools[tool]) {
+        throw new Error(`External tool "${tool}" not found in deno.jsonc`);
+    }
+    return parsed.externalTools[tool];
+}
 
 if (import.meta.main) {
     build();
@@ -147,7 +157,7 @@ export function checkBackend() {
  * https://github.com/GyanD/codexffmpeg/releases
  */
 export async function downloadFFmpeg() {
-    const version = "7.1.1";
+    const version = getExternalToolVersion("ffmpeg");
     const url = `https://github.com/GyanD/codexffmpeg/releases/download/${version}/ffmpeg-${version}-essentials_build.7z`;
 
     const zipFile = "./tools/ffmpeg.7z";
@@ -186,7 +196,8 @@ export async function downloadFFmpeg() {
 }
 
 export async function download7zip() {
-    const url = "https://github.com/ip7z/7zip/releases/download/24.09/7zr.exe";
+    const version = getExternalToolVersion("7zip");
+    const url = `https://github.com/ip7z/7zip/releases/download/${version}/7zr.exe`;
     const dest = "./tools/7zr.exe";
 
     if (await fs.exists(dest)) {
