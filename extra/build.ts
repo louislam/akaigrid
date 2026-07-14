@@ -83,6 +83,10 @@ export async function pack() {
 }
 
 export function denoInstall() {
+    if (fs.existsSync("node_modules_frontend")) {
+        Deno.renameSync("node_modules_frontend", "node_modules");
+    }
+
     childProcess.spawnSync("deno", [
         "install",
         "--node-modules-dir=auto",
@@ -114,7 +118,13 @@ export function buildFrontend(isBuiltByProductionUser: boolean) {
     });
 
     Deno.removeSync("./package.json");
-    Deno.removeSync("node_modules", { recursive: true });
+    if (fs.existsSync("node_modules")) {
+        try {
+            Deno.renameSync("node_modules", "node_modules_frontend");
+        } catch {
+            // Ignore
+        }
+    }
 }
 
 /**
