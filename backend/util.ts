@@ -134,7 +134,7 @@ export function getFrontendDir(): string {
 }
 
 export function start(path: string) {
-    Deno.spawn("cmd", ["/c", "start", "", path]);
+    Deno.spawn("cmd", ["/c", "start", "", path], { stdout: "null", stderr: "null" });
 }
 
 export function isDev() {

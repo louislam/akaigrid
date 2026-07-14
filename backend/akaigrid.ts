@@ -202,7 +202,7 @@ export class AkaiGrid {
         // If player is set, use it to open the file
         if (this.config.player && this.config.player.trim() !== "") {
             log.debug(`Using player ${this.config.player} to open the file.`);
-            Deno.spawn(this.config.player, [path]);
+            Deno.spawn(this.config.player, [path], { stdout: "null", stderr: "null" });
         } else {
             start(path);
         }
@@ -225,7 +225,7 @@ export class AkaiGrid {
     async openFolder(folder: string) {
         this.checkAllowedPath(folder);
         log.debug(`Opening folder ${folder}`);
-        Deno.spawn("explorer.exe", [folder]);
+        Deno.spawn("explorer.exe", [folder], { stdout: "null", stderr: "null" });
     }
 
     async setDone(path: string, done: boolean) {
