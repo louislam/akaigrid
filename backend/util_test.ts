@@ -1,5 +1,5 @@
-import { assertEquals, assertLess } from "jsr:@std/assert@^1.0.16";
-import { escapeString, generateThumbnail, getRFEHash, getVideoInfo } from "./util.ts";
+import { assertEquals } from "jsr:@std/assert@^1.0.16";
+import { escapeString, generateThumbnail, getRFEHash, getShortHash, getVideoInfo, isSamePath, isSubPath } from "./util.ts";
 import * as fs from "@std/fs";
 
 Deno.test("test escapeString", () => {
@@ -18,6 +18,30 @@ Deno.test("test getRFEHash", () => {
     let path = "C:\\uptime kuma.mp4";
     let actual = getRFEHash(path);
     assertEquals(actual, expected);
+});
+
+Deno.test("test getShortHash", () => {
+    const data = new TextEncoder().encode("test");
+    const hash = getShortHash(data);
+    assertEquals(typeof hash, "string");
+    assertEquals(hash.length, 12);
+    // Same input should produce same hash
+    assertEquals(getShortHash(data), hash);
+});
+
+Deno.test("test isSubPath", () => {
+    assertEquals(isSubPath("/home/user", "/home/user/documents/file.txt"), true);
+    assertEquals(isSubPath("/home/user", "/home/user"), false);
+    assertEquals(isSubPath("/home/user", "/home/other/file.txt"), false);
+    assertEquals(isSubPath("/home/user", "/tmp/file.txt"), false);
+    assertEquals(isSubPath("C:\\Videos", "C:\\Videos\\Anime\\episode.mkv"), true);
+    assertEquals(isSubPath("C:\\Videos", "C:\\Other\\file.txt"), false);
+});
+
+Deno.test("test isSamePath", () => {
+    assertEquals(isSamePath("/home/user", "/home/user"), true);
+    assertEquals(isSamePath("/home/user", "/home/other"), false);
+    assertEquals(isSamePath("C:\\Videos", "C:\\Videos"), true);
 });
 
 // Test generateThumbnail
