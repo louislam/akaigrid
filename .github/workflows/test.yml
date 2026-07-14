@@ -13,7 +13,7 @@ jobs:
         strategy:
             matrix:
                 os: [windows-latest]
-                deno: [v2.8.3]
+                deno: [v2.9.2]
 
         steps:
             - name: Turn off core.autocrlf
