@@ -280,7 +280,8 @@ a:hover {
     gap: 4px;
 }
 
-input, select {
+input,
+select {
     font-size: 0.75rem;
     background: rgba(255, 255, 255, 0.1);
     color: #aaa;
