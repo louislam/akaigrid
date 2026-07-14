@@ -1,5 +1,5 @@
 import * as fs from "@std/fs";
-import { buildFrontend, denoInstall, download7zip, downloadFFmpeg } from "./build.ts";
+import { denoInstallFrontend, download7zip, downloadFFmpeg } from "./build.ts";
 import { checkDenoVersion } from "../backend/util.ts";
 
 checkDenoVersion();
@@ -9,9 +9,8 @@ await fs.ensureDir("./tools");
 await download7zip();
 await downloadFFmpeg();
 
-// Copy package-dev.json to package.json
-Deno.copyFileSync("./package-dev.json", "./package.json");
-denoInstall();
+// Install frontend deps
+denoInstallFrontend();
 
 // check if config.yaml exists
 const configPath = "./config.yaml";

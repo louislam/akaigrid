@@ -258,9 +258,11 @@ export async function generateThumbnail(videoPath: string, thumbnailPath: string
         throw new Error(`Error executing ffprobe: ${errorMsg}, ${output.code}`);
     }
 
+    // Get the video duration
     const duration = parseFloat(new TextDecoder().decode(output.stdout).trim());
     log.debug(`Video duration: ${duration} seconds`);
 
+    // The 20% of the video duration
     const target = Math.floor(duration * 0.2);
     const targetWidth = 512;
 
@@ -272,6 +274,10 @@ export async function generateThumbnail(videoPath: string, thumbnailPath: string
         "-t",
         "0.1",
         "-vf",
+        // Generate thumbnail's width is always fixed
+        // SAR = Storage Aspect Ratio, some videos let's say original resolution is 1440x1080, but the video is 16:9, so the SAR is 1.3333
+        // Width: 512px
+        // Height Formula = Height * (512 / Width) * (1 / SAR)
         `scale=${targetWidth}:ih*(1/sar)*(${targetWidth}/iw)`,
         "-vframes",
         "1",
@@ -282,6 +288,7 @@ export async function generateThumbnail(videoPath: string, thumbnailPath: string
     });
 
     if (output.code !== 0) {
+        log.error("Error executing ffmpeg:", output.stderr);
         throw new Error(`Error executing ffmpeg: ${output.code}`);
     }
     log.debug(`Thumbnail generated at: ${thumbnailPath}`);

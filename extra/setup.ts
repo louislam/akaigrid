@@ -1,5 +1,5 @@
 import * as fs from "@std/fs";
-import { buildFrontend, denoInstall, download7zip, downloadFFmpeg } from "./build.ts";
+import { buildFrontend, denoInstallFrontend, download7zip, downloadFFmpeg } from "./build.ts";
 import { checkDenoVersion, start } from "../backend/util.ts";
 
 checkDenoVersion();
@@ -10,7 +10,8 @@ await download7zip();
 await downloadFFmpeg();
 
 // Build Frontend
-buildFrontend(true);
+denoInstallFrontend();
+buildFrontend();
 
 // check if config.yaml exists
 const configPath = "./config.yaml";

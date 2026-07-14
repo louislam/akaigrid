@@ -1,6 +1,5 @@
 /.idea
-/node_modules
-/node_modules_frontend
+/frontend/node_modules
 /.env
 /private
 /build
@@ -16,8 +15,6 @@
 /data
 /tools
 /frontend-dist
-
-/package.json
 
 /config.yaml
 /config*.yaml

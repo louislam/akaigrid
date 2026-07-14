@@ -13,7 +13,7 @@ if (import.meta.main) {
 
 export function build() {
     checkBackend();
-    buildFrontend(false);
+    buildFrontend();
     buildBackend();
 }
 
@@ -82,67 +82,30 @@ export async function pack() {
     }
 }
 
-export function denoInstall() {
-    if (fs.existsSync("node_modules_frontend")) {
-        Deno.renameSync("node_modules_frontend", "node_modules");
-    }
-
-    childProcess.spawnSync("deno", [
-        "install",
-        "--node-modules-dir=auto",
-    ], {
-        stdio: "inherit",
-    });
-}
-
 /**
  * Build the frontend
  */
-export function buildFrontend(isBuiltByProductionUser: boolean) {
-    fs.copySync("./package-dev.json", "./package.json", {
-        overwrite: true,
-    });
-
-    denoInstall();
-
+export function buildFrontend() {
     childProcess.spawnSync("deno", [
-        "run",
-        "--allow-all",
-        "--node-modules-dir=manual",
-        "./node_modules/vite/bin/vite.js",
-        "build",
-        "--config",
-        "./frontend/vite.config.js",
+        "install",
     ], {
         stdio: "inherit",
+        cwd: "./frontend",
     });
 
-    Deno.removeSync("./package.json");
-    if (fs.existsSync("node_modules")) {
-        try {
-            Deno.renameSync("node_modules", "node_modules_frontend");
-        } catch {
-            // Ignore
-        }
-    }
+    childProcess.spawnSync("deno", [
+        "task",
+        "build:frontend",
+    ], {
+        stdio: "inherit",
+        cwd: "./",
+    });
 }
 
 /**
  * Build the backend
  */
 export function buildBackend() {
-    // Deno cannot exclude devDependencies.................. which heavily increases the size of the build.
-    // I tried to be creative here.
-    // Rename package.json in order to exclude devDependencies
-    try {
-        Deno.renameSync("package.json", "package.json.building");
-    } catch {
-        // Ignore
-    }
-
-    // Because we have excluded devDependencies, @types/express is not existing anymore.
-    // TypeScript will complain here, --no-check skips the check.
-    // To overcome this, checkBackend() is called before buildBackend()
     try {
         childProcess.spawnSync("deno", [
             "compile",
@@ -165,12 +128,6 @@ export function buildBackend() {
         });
     } catch (_error) {
         log.error("Error while building the backend");
-    }
-
-    try {
-        Deno.renameSync("package.json.building", "package.json");
-    } catch {
-        // Ignore
     }
 }
 
