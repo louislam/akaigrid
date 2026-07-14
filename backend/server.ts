@@ -502,6 +502,7 @@ export class Server {
                     // If the file is not found, serve the index.html file
                     const indexPath = path.join(this.frontendDir, "index.html");
                     response = await serveFile(request, indexPath);
+                    response.headers.set("Cache-Control", "no-cache");
                 }
 
                 return response;

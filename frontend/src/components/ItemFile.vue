@@ -98,7 +98,9 @@ async function open() {
             </div>
         </div>
         <div class="mt-1">
-            <div><HighlightString :text="props.item.name" /></div>
+            <div>
+                <HighlightString :text="props.item.name" />
+            </div>
             <div :style="showExtraInfo" class="extraInfo">
                 <BBadge variant="secondary">{{ duration }}</BBadge>
                 <BBadge variant="secondary" class="ms-2">{{ resolution }}</BBadge>

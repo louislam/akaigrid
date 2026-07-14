@@ -1,9 +1,10 @@
 import * as fs from "@std/fs";
 import * as path from "@std/path";
+import open from "open";
 import { AkaiGridConfig, AkaiGridConfigSchema, isDemo, isDev, isFileLocked, isSamePath, isSubPath, log, start, videoExtensions } from "./util.ts";
 import * as yaml from "jsr:@std/yaml@^1.0.10";
 import { Entry } from "./entry.ts";
-import { closeKv, initKv, kv, kvDeletePrefix } from "./db/kv.ts";
+import { closeKv, initKv, kv } from "./db/kv.ts";
 import { DirConfig, DirConfigSchema } from "../common/util.ts";
 import { clearAllStatCache, clearStatCache, statCache } from "./file-stat.ts";
 
@@ -202,9 +203,9 @@ export class AkaiGrid {
         // If player is set, use it to open the file
         if (this.config.player && this.config.player.trim() !== "") {
             log.debug(`Using player ${this.config.player} to open the file.`);
-            Deno.spawn(this.config.player, [path]);
+            Deno.spawn(this.config.player, [path], { stdout: "null", stderr: "null" });
         } else {
-            start(path);
+            await start(path);
         }
 
         // Also update the date accessed for the parent directory
@@ -225,7 +226,7 @@ export class AkaiGrid {
     async openFolder(folder: string) {
         this.checkAllowedPath(folder);
         log.debug(`Opening folder ${folder}`);
-        Deno.spawn("explorer.exe", [folder]);
+        await open(folder);
     }
 
     async setDone(path: string, done: boolean) {

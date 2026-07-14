@@ -8,6 +8,7 @@ import { VideoInfo } from "../common/util.ts";
 import { fileURLToPath } from "node:url";
 import * as jsonc from "@std/jsonc";
 import * as semver from "@std/semver";
+import open from "open";
 
 /**
  * After compiled, some files are inside the executable, so the path is different
@@ -133,8 +134,8 @@ export function getFrontendDir(): string {
     return path.join(getSourceDir(), "./frontend-dist");
 }
 
-export function start(path: string) {
-    Deno.spawn("cmd", ["/c", "start", "", path]);
+export function start(target: string) {
+    return open(target);
 }
 
 export function isDev() {
@@ -259,12 +260,10 @@ export async function generateThumbnail(videoPath: string, thumbnailPath: string
 
     // Get the video duration
     const duration = parseFloat(new TextDecoder().decode(output.stdout).trim());
-
     log.debug(`Video duration: ${duration} seconds`);
 
     // The 20% of the video duration
     const target = Math.floor(duration * 0.2);
-
     const targetWidth = 512;
 
     output = await Deno.spawnAndWait(ffmpeg, [
@@ -272,6 +271,8 @@ export async function generateThumbnail(videoPath: string, thumbnailPath: string
         target + "",
         "-i",
         videoPath,
+        "-t",
+        "0.1",
         "-vf",
         // Generate thumbnail's width is always fixed
         // SAR = Storage Aspect Ratio, some videos let's say original resolution is 1440x1080, but the video is 16:9, so the SAR is 1.3333
@@ -282,7 +283,8 @@ export async function generateThumbnail(videoPath: string, thumbnailPath: string
         "1",
         thumbnailPath,
     ], {
-        stdout: "piped",
+        stdout: "null",
+        stderr: "null",
     });
 
     if (output.code !== 0) {

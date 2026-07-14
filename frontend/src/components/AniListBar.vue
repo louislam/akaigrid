@@ -55,7 +55,9 @@ watch(() => props.aniListMediaID, async (id) => {
 
 watch(animeInfo, (info) => {
     selectedStatus.value = info?.userStatus ?? "";
-    selectedProgress.value = info?.userProgress ?? 0;
+    if (info?.userProgress != null) {
+        selectedProgress.value = info?.userProgress;
+    }
 }, { immediate: true });
 
 watch(selectedStatus, async (status) => {
@@ -278,7 +280,8 @@ a:hover {
     gap: 4px;
 }
 
-input, select {
+input,
+select {
     font-size: 0.75rem;
     background: rgba(255, 255, 255, 0.1);
     color: #aaa;

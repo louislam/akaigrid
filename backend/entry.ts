@@ -2,7 +2,7 @@ import * as path from "@std/path";
 import crypto from "node:crypto";
 import { AkaiGrid } from "./akaigrid.ts";
 import * as fs from "@std/fs";
-import { devLogTime, devLogTimeEnd, generateThumbnail, getFrontendDir, getVideoInfo, log, placeholderImagePath } from "./util.ts";
+import { devLogTime, devLogTimeEnd, generateThumbnail, getVideoInfo, log, placeholderImagePath } from "./util.ts";
 import { kv } from "./db/kv.ts";
 import { EntryDisplayObject, ObjectAsArray, VideoInfo, VideoInfoSchema } from "../common/util.ts";
 import * as naturalOrderBy from "natural-orderby";
