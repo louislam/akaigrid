@@ -8,7 +8,6 @@ import { VideoInfo } from "../common/util.ts";
 import { fileURLToPath } from "node:url";
 import * as jsonc from "@std/jsonc";
 import * as semver from "@std/semver";
-import open from "open";
 
 /**
  * After compiled, some files are inside the executable, so the path is different
@@ -134,8 +133,22 @@ export function getFrontendDir(): string {
     return path.join(getSourceDir(), "./frontend-dist");
 }
 
+/**
+ * Launch a file or folder
+ *
+ * Previously used `start "path"`, but sometimes, it won't launch at the first click.
+ * And then changed to use "open" package, but the video player doesn't launch in foreground.
+ *
+ * Hopefully, explorer.exe can solve the problems.
+ *
+ * @param target File path
+ */
 export function start(target: string) {
-    return open(target);
+    return new Deno.Command("explorer.exe", {
+        args: [target],
+        stdout: "null",
+        stderr: "null",
+    }).spawn();
 }
 
 export function isDev() {

@@ -1,6 +1,5 @@
 import * as fs from "@std/fs";
 import * as path from "@std/path";
-import open from "open";
 import { AkaiGridConfig, AkaiGridConfigSchema, isDemo, isDev, isFileLocked, isSamePath, isSubPath, log, start, videoExtensions } from "./util.ts";
 import * as yaml from "jsr:@std/yaml@^1.0.10";
 import { Entry } from "./entry.ts";
@@ -226,7 +225,7 @@ export class AkaiGrid {
     async openFolder(folder: string) {
         this.checkAllowedPath(folder);
         log.debug(`Opening folder ${folder}`);
-        await open(folder);
+        await start(folder);
     }
 
     async setDone(path: string, done: boolean) {

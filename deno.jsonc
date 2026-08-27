@@ -79,7 +79,6 @@
         "@std/yaml": "jsr:@std/yaml@~1.1.2",
         "@types/node": "npm:@types/node@^22.0.0",
         "natural-orderby": "npm:natural-orderby@~5.0.0",
-        "open": "npm:open@~11.0.0",
         "zod": "npm:zod@~3.24.3"
     },
 
