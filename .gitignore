@@ -6,6 +6,7 @@
 /coverage
 /tmp
 /AkaiGrid.exe
+/focus_launch.exe
 /release
 
 # Deno's Lockfile is weird, I don't understnad the behaviour at the moment

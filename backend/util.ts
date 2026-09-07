@@ -139,16 +139,31 @@ export function getFrontendDir(): string {
  * Previously used `start "path"`, but sometimes, it won't launch at the first click.
  * And then changed to use "open" package, but the video player doesn't launch in foreground.
  *
- * Hopefully, explorer.exe can solve the problems.
- *
  * @param target File path
  */
 export function start(target: string) {
-    return new Deno.Command("explorer.exe", {
-        args: [target],
-        stdout: "null",
-        stderr: "null",
-    }).spawn();
+    try {
+        return new Deno.Command(getFocusLaunchPath(), {
+            args: [target],
+            stdout: "null",
+            stderr: "null",
+        }).spawn();
+    } catch (_e) {
+        // focus_launch.exe is not available, fall back to the old behavior.
+        return new Deno.Command("explorer.exe", {
+            args: [target],
+            stdout: "null",
+            stderr: "null",
+        }).spawn();
+    }
+}
+
+function getFocusLaunchPath(): string {
+    let dir = "./";
+    if (Deno.build.standalone) {
+        dir = path.dirname(Deno.execPath());
+    }
+    return path.join(dir, "./focus_launch.exe");
 }
 
 export function isDev() {

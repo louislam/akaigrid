@@ -25,6 +25,33 @@ export function build() {
     checkBackend();
     buildFrontend();
     buildBackend();
+    buildStartTool();
+}
+
+/**
+ * Build the focus_launch.exe (extra/start) that launches a file and steals focus.
+ * It sits next to AkaiGrid.exe / goes into the release package.
+ */
+export function buildStartTool() {
+    const result = childProcess.spawnSync("go", [
+        "build",
+        "-C", "./extra/start",
+        "-ldflags", "-s -w -H windowsgui",
+        "-o", "../../focus_launch.exe",
+        ".",
+    ], {
+        stdio: "inherit",
+    });
+
+    if (result.error) {
+        log.error("Error while building focus_launch.exe");
+        log.error(result.error.message);
+        Deno.exit(1);
+    }
+    if (result.status !== 0) {
+        log.error(`Error while building focus_launch.exe (exit code ${result.status})`);
+        Deno.exit(1);
+    }
 }
 
 export async function pack() {
@@ -43,6 +70,7 @@ export async function pack() {
         ["./tools/ffmpeg", "./tools/ffmpeg"],
         ["./config-template.yaml", "./config.yaml"],
         ["./AkaiGrid.exe", "./AkaiGrid.exe"],
+        ["./focus_launch.exe", "./focus_launch.exe"],
     ];
 
     // Clean up the target directory
